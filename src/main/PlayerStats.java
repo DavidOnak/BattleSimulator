@@ -18,6 +18,7 @@ public class PlayerStats {
     private int nextLevelXP;
     private int[] stats;
     private int health; // does not get saved and will have method to return heath and to apply damage to it!
+    private final int healthInitial;
 
     /**
      * Constructor that obtains data from a save.
@@ -29,24 +30,62 @@ public class PlayerStats {
         stats = retrieveStats();
 
         level = stats[0];
+        health = stats[1];
+        healthInitial = stats[1];
         xp = stats[6];
 
-        getNextLevel();
+        calculateNextLevel();
     }
 
     /**
-     * Return the player stats to caller.
+     * Return the player level to caller.
      *
-     * @return the stats of the player.
+     * @return the level of the player.
      */
-    public int[] getStats() {
-        return stats;
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * Return the player health to caller.
+     *
+     * @return the health of the player.
+     */
+    public int getHealth() {
+        return health;
+    }
+
+    /**
+     * Return the player initial health to caller.
+     *
+     * @return the initial health of the player.
+     */
+    public int getInitialHealth() {
+        return healthInitial;
+    }
+
+    /**
+     * Return the player xp to caller.
+     *
+     * @return the xp of the player.
+     */
+    public int getXP() {
+        return xp;
+    }
+
+    /**
+     * Return the player's XP for next level to caller.
+     *
+     * @return the XP for next level for the player.
+     */
+    public int getXPForNextLevel() {
+        return nextLevelXP;
     }
 
     /**
      * Calculate value for nextLevel.
      */
-    private void getNextLevel() {
+    private void calculateNextLevel() {
         nextLevelXP = (int) (1.7*level) + 15;
     }
 
@@ -62,7 +101,7 @@ public class PlayerStats {
         while (newXP >= nextLevelXP) {
             newXP -= nextLevelXP;
             levelUp();
-            getNextLevel();
+            calculateNextLevel();
         }
 
         stats[6] = newXP;

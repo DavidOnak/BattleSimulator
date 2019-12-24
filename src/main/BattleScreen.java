@@ -23,12 +23,12 @@ public class BattleScreen extends JFrame {
     private JButton btnReturn;
     private JLabel lblBattleField;
     private JLabel lblBattleText;
-    private JLabel lblHealth;
     private JLabel lblPlayerInfo;
     private JLabel lblCompInfo;
     private JLabel lblPlayer;
     private JLabel lblPlayerName;
     private JLabel lblPlayerLevel;
+    private JLabel lblPlayerHealth;
     private JLabel lblPokeLevel;
     private JLabel lblPokeName;
     private JLabel lblPokemon;
@@ -45,12 +45,14 @@ public class BattleScreen extends JFrame {
     private PokemonMove playerMove3;
     private PokemonMove playerMove4;
     private PlayerStats player;
+    private Pokemon pokemon;
 
     public BattleScreen(int saveSlot, int numOpp, int tier) {
         this.saveSlot = saveSlot;
         numOfOpp = numOpp;
         this.tier = tier;
         player = new PlayerStats(saveSlot);
+        pokemon = new Pokemon(tier);
 
         // get player moves
         getMoves();
@@ -186,6 +188,31 @@ public class BattleScreen extends JFrame {
         return colour;
     }
 
+    /**
+     * Generates a random image out of 6 possible battle field images
+     *
+     * @return An ImageIcon representing a battle field image.
+     */
+    private ImageIcon generateRandomBattleField() {
+        ImageIcon image;
+
+        switch ((int) (6 * Math.random()+1)) {
+            case 1: image = new ImageIcon("images/background/BattleScreen1.PNG");
+                break;
+            case 2: image = new ImageIcon("images/background/BattleScreen2.PNG");
+                break;
+            case 3: image = new ImageIcon("images/background/BattleScreen3.PNG");
+                break;
+            case 4: image = new ImageIcon("images/background/BattleScreen4.PNG");
+                break;
+            case 5: image = new ImageIcon("images/background/BattleScreen5.PNG");
+                break;
+            default: image = new ImageIcon("images/background/BattleScreen6.PNG");
+        }
+
+        return image;
+    }
+
     //make method to get random file dir for batlle field, and for getting colours
     private void makeFrame() {
         battleScreen = new JFrame();
@@ -238,64 +265,59 @@ public class BattleScreen extends JFrame {
         lblPlayerInfo.setIcon(new ImageIcon("images/content/InfoPanel.png"));
         lblPlayerInfo.setBounds(310, 40, 290, 100);
 
-        // add content to player and computer info panels
+        // add content labels to player and computer info panels
+        lblPlayerName = new JLabel(name);
+        lblPlayerName.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblPlayerName.setBounds(960, 360, 160, 30);
+        lblPlayerLevel = new JLabel("Lv."+player.getLevel());
+        lblPlayerLevel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPlayerLevel.setBounds(1170, 360, 60, 30);
+        lblPlayerHealth = new JLabel(player.getHealth()+"/"+player.getInitialHealth());
+        lblPlayerHealth.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPlayerHealth.setBounds(1070, 410, 44, 30);
+        lblPokeName = new JLabel(pokemon.getName());
+        lblPokeName.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblPokeName.setBounds(330, 50, 160, 30);
+        lblPokeLevel = new JLabel("Lv."+pokemon.getLevel());
+        lblPokeLevel.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPokeLevel.setBounds(530, 50, 60, 30);
+
+        // add progress bars to player and computer info panels
+        pbCompHealth = new JProgressBar();
+        pbCompHealth.setForeground(new Color(51, 255, 51));
+        pbCompHealth.setBounds(390, 100, 146, 14);
+        pbCompHealth.setMaximum(pokemon.getInitialHealth());
+        pbCompHealth.setValue(pokemon.getHealth());
+        pbExperience = new JProgressBar();
+        pbExperience.setForeground(new Color(0, 153, 204));
+        pbExperience.setBounds(960, 440, 260, 10);
+        pbExperience.setMaximum(player.getXPForNextLevel());
+        pbExperience.setValue(player.getXP());
+        pbPlayerHealth = new JProgressBar();
+        pbPlayerHealth.setForeground(new Color(51, 255, 51));
+        pbPlayerHealth.setBounds(1020, 400, 146, 14);
+        pbPlayerHealth.setMaximum(player.getInitialHealth());
+        pbPlayerHealth.setValue(player.getHealth());
+
+        // add battle field image
+        lblBattleField = new JLabel();
+        lblBattleField.setIcon(generateRandomBattleField());
+        lblBattleField.setBounds(0, 0, 1350, 470);
+
+        // add characters to battle field
+        lblPokemon = new JLabel();
+        lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".png"));
+        lblPokemon.setBounds(830, 20, 370, 290);
+        lblPlayer = new JLabel();
+        lblPlayer.setIcon(new ImageIcon("images/pokemon/Player"+gender+".png"));
+        lblPlayer.setBounds(190, 220, 350, 250);
 
 
         // TODO: FIX STUFF BELOW
+        /*
         lblBattleText.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         getContentPane().add(lblBattleText);
         lblBattleText.setBounds(10, 590, 350, 120);
-
-        lblPokemon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pokemon/Slim.png"))); // NOI18N
-        getContentPane().add(lblPokemon);
-        lblPokemon.setBounds(830, 20, 370, 290);
-
-        lblPokeName.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblPokeName.setText("Charzard");
-        getContentPane().add(lblPokeName);
-        lblPokeName.setBounds(330, 50, 160, 30);
-
-        lblPokeLevel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblPokeLevel.setText("Lv.15");
-        getContentPane().add(lblPokeLevel);
-        lblPokeLevel.setBounds(530, 50, 60, 30);
-
-        pbHealth.setForeground(new java.awt.Color(51, 255, 51));
-        getContentPane().add(pbHealth);
-        pbHealth.setBounds(390, 100, 146, 14);
-
-        lblPokeLevel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblPokeLevel1.setText("Lv.15");
-        getContentPane().add(lblPokeLevel1);
-        lblPokeLevel1.setBounds(1170, 360, 60, 30);
-
-        lblPokeName1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        lblPokeName1.setText("Me");
-        getContentPane().add(lblPokeName1);
-        lblPokeName1.setBounds(960, 360, 160, 30);
-
-        lblHealth.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        lblHealth.setText("56/56");
-        getContentPane().add(lblHealth);
-        lblHealth.setBounds(1070, 410, 44, 30);
-
-        pbExperience.setForeground(new java.awt.Color(0, 153, 204));
-        getContentPane().add(pbExperience);
-        pbExperience.setBounds(960, 440, 260, 10);
-
-        pbPHealth.setForeground(new java.awt.Color(51, 255, 51));
-        getContentPane().add(pbPHealth);
-        pbPHealth.setBounds(1020, 400, 146, 14);
-
-
-
-        lblPlayer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pokemon/Player.png"))); // NOI18N
-        getContentPane().add(lblPlayer);
-        lblPlayer.setBounds(190, 220, 350, 250);
-
-        lblBattleBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pokemon/BB1.PNG"))); // NOI18N
-        getContentPane().add(lblBattleBackground);
-        lblBattleBackground.setBounds(0, 0, 1350, 470);
 
         lblBattleText3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         getContentPane().add(lblBattleText3);
@@ -309,6 +331,7 @@ public class BattleScreen extends JFrame {
         lblBattleText1.setText("Text area for battle");
         getContentPane().add(lblBattleText1);
         lblBattleText1.setBounds(10, 480, 340, 120);
+*/
 
         //add components to panel
         panel.add(btnNext);
@@ -319,6 +342,16 @@ public class BattleScreen extends JFrame {
         panel.add(btnMove4);
         panel.add(lblCompInfo);
         panel.add(lblPlayerInfo);
+        panel.add(lblPlayerName);
+        panel.add(lblPlayerLevel);
+        panel.add(lblPokeName);
+        panel.add(lblPokeLevel);
+        panel.add(lblBattleField);
+        panel.add(lblPokemon);
+        panel.add(lblPlayer);
+        panel.add(pbCompHealth);
+        panel.add(pbExperience);
+        panel.add(pbPlayerHealth);
         
         battleScreen.add(panel);
     }
