@@ -17,6 +17,7 @@ public class PlayerStats {
     private int xp;
     private int nextLevelXP;
     private int[] stats;
+    private int health; // does not get saved and will have method to return heath and to apply damage to it!
 
     /**
      * Constructor that obtains data from a save.

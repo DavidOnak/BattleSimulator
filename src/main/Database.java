@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author David Onak
  */
 public class Database extends JFrame{
-    private int saveSlot;
+    private final int saveSlot;
     private JFrame database;
     private JButton btnMainMenu;
     private JButton btnMoveSelection;

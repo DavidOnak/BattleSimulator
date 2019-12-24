@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * @author David Onak
  */
 public class MoveSelection {
-    private int saveSlot;
+    private final int saveSlot;
     private JFrame moveSelection;
     private JButton btnMovePound;
     private JButton btnMoveDoubleSlap;
@@ -75,7 +75,6 @@ public class MoveSelection {
         for (String move: moves) {
             System.out.println(move);
         }
-        System.out.println("Move selection for save" + saveSlot);
     }
 
     /**
@@ -112,7 +111,6 @@ public class MoveSelection {
         for (String move: moves) {
             System.out.println(move);
         }
-        System.out.println("Move selection for save" + saveSlot);
     }
 
     /**

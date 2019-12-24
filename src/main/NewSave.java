@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  * @author David Onak
  */
 public class NewSave extends JFrame {
-    private int saveSlot;
+    private final int saveSlot;
     private JFrame newSave;
     private JButton btnFemale;
     private JButton btnMale;
