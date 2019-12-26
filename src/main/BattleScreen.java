@@ -60,6 +60,8 @@ public class BattleScreen extends JFrame {
         // make new battle screen frame
         makeFrame();
         battleScreen.setVisible(true);
+        btnNext.setEnabled(false);
+        btnReturn.setEnabled(false);
 
         // activate buttons
         //buttonActivation();
@@ -278,7 +280,10 @@ public class BattleScreen extends JFrame {
         lblPokeName = new JLabel(pokemon.getName());
         lblPokeName.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblPokeName.setBounds(330, 50, 160, 30);
-        lblPokeLevel = new JLabel("Lv."+pokemon.getLevel());
+        if (pokemon.getLevel() == 115)
+            lblPokeLevel = new JLabel("Lv.X");
+        else
+            lblPokeLevel = new JLabel("Lv."+pokemon.getLevel());
         lblPokeLevel.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPokeLevel.setBounds(530, 50, 60, 30);
 
@@ -306,7 +311,7 @@ public class BattleScreen extends JFrame {
 
         // add characters to battle field
         lblPokemon = new JLabel();
-        lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".png"));
+        lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".gif"));
         lblPokemon.setBounds(830, 20, 370, 290);
         lblPlayer = new JLabel();
         lblPlayer.setIcon(new ImageIcon("images/pokemon/Player"+gender+".png"));
@@ -340,18 +345,19 @@ public class BattleScreen extends JFrame {
         panel.add(btnMove2);
         panel.add(btnMove3);
         panel.add(btnMove4);
-        panel.add(lblCompInfo);
-        panel.add(lblPlayerInfo);
+        panel.add(lblPlayerHealth);
         panel.add(lblPlayerName);
         panel.add(lblPlayerLevel);
         panel.add(lblPokeName);
         panel.add(lblPokeLevel);
-        panel.add(lblBattleField);
         panel.add(lblPokemon);
         panel.add(lblPlayer);
         panel.add(pbCompHealth);
         panel.add(pbExperience);
         panel.add(pbPlayerHealth);
+        panel.add(lblCompInfo);
+        panel.add(lblPlayerInfo);
+        panel.add(lblBattleField);
         
         battleScreen.add(panel);
     }

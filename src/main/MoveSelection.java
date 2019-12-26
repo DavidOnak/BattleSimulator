@@ -189,15 +189,14 @@ public class MoveSelection {
         });
 
         btnMoveLeafage.addActionListener(e -> {
-            //stikes opponent with leaves
             //pp 40 power 40 accuracy 100%
             if (addMove("Leafage") == 1)
                 btnMoveLeafage.setBackground(new Color(153, 153, 153));
         });
 
         btnMoveAbsorb.addActionListener(e -> {
-            //Hits 2-5 times in one turn.
-            //pp 10 power 15 accuracy 85%
+            //Recover half the damage dealt.
+            //pp 25 power 20 accuracy 100%
             if (addMove("Absorb") == 1)
                 btnMoveAbsorb.setBackground(new Color(153, 153, 153));
         });
