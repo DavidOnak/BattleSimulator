@@ -7,6 +7,8 @@ package main;
 public class Pokemon {
     private final String name;
     private int level;
+    private int type1;
+    private final int type2;
     private int health;
     private int initialHealth; // change this to final
     private int[] stats;
@@ -43,7 +45,7 @@ public class Pokemon {
             randomPokemon = (int) (8 * Math.random());
             name = REGULAR[randomPokemon];
         }
-
+        type2 = 0;
         generateStats();
     }
 
@@ -51,6 +53,19 @@ public class Pokemon {
         switch (name) {
 
         }
+    }
+
+    public void dealDamage(int damage) {
+        health = health - damage;
+    }
+
+    /**
+     * Return the pokemon's second type to caller.
+     *
+     * @return the pokemon's second type.
+     */
+    public int getSecondType() {
+        return type2;
     }
 
     /**

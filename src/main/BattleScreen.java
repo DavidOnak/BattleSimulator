@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -116,48 +117,50 @@ public class BattleScreen extends JFrame {
         lblPlayerText.setText("You used " + move.getName() + "!");
 
         // get raw damage and apply effect
-        int actualDamage;
-        int rawDamage = move.calculateRawDamage(1,1,1);
-        switch (move.findEffect(1)) { // get dam first and adjust text later for timing perpusers
-            case "None":
-                actualDamage = 0;
-                lblPlayerText.setText("You used " + move + ", it has no effect!");
-                break;
-            case "not every effective":
-                actualDamage = rawDamage / 2;
-                lblPlayerText.setText("You used " + move + ", it is not very effective!");
-                break;
-            case "Normal":
-                actualDamage = rawDamage;
-                lblPlayerText.setText("You used " + move + "!");
-            default:
-                actualDamage = rawDamage * 2;
-                lblPlayerText.setText("You used " + move + ", it is super effective!");
-        }
-        int ran = (int) (15 * Math.random() + 85);//random factor
-        d4 = (d4 * ran) / 100;
-        Random rand = new Random();
-        if (rand.nextInt(100) < a) {
-            ac = true;
-        }
-        if (ac == true) {
-            statsC[0] = statsC[0] - d3;
-            System.out.println(d3);
-            System.out.println(d4 + " damage done");
-            System.out.println("");
-        } else {
-            lblBattleText1.setText("You used " + move + ", but it missed!");
-            System.out.println("Attack missed!");
-            System.out.println("");
-        }
-        pbHealth.setValue(statsC[0]);
-        r--;
+        int rawDamage = move.calculateRawDamage(1,1,1); //TODO
+        int actualDamage = move.findActualDamage(1, rawDamage); // TODO
+        if (pokemon.getSecondType() != 0)
+            actualDamage = move.findActualDamage(pokemon.getSecondType(), actualDamage);
 
+        // get random factor in attacks
+        int random = (int) (15 * Math.random() + 85);
+        int damage = (actualDamage * random) / 100;
+        waitOneSecond();
+
+        // determine if a hit or miss
+        Random rand = new Random();
+        if (rand.nextInt(100) < move.getAccuracy()) {
+            System.out.println(rand.nextInt(100)); // TODO: remove this
+
+            // deal damage
+            pokemon.dealDamage(damage);
+            while (pbCompHealth.getValue() > pokemon.getHealth()) {
+                pbCompHealth.setValue(pbCompHealth.getValue() - 1);
+                waitABit();
+            }
+            // give effect message
+            if (actualDamage == 0)
+                lblPlayerText.setText("You used " + move.getName() + ", it has no effect!");
+            else if (actualDamage > rawDamage)
+                lblPlayerText.setText("You used " + move.getName() + ", it is super effective!");
+            else if (rawDamage > actualDamage)
+                lblPlayerText.setText("You used " + move.getName() + ", it is not very effective!");
+        } else {
+            lblPlayerText.setText("You used " + move.getName() + ", but it missed!");
+        }
     }
 
     private void waitOneSecond() {
         try {
             TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ex) {
+            System.out.println("Interrupted Exception from one second delay");
+        }
+    }
+
+    private void waitABit() {
+        try {
+            TimeUnit.MILLISECONDS.sleep(250);
         } catch (InterruptedException ex) {
             System.out.println("Interrupted Exception from one second delay");
         }

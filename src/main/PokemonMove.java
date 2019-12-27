@@ -112,8 +112,9 @@ public class PokemonMove {
         pp --;
     }
 
-    public String findEffect(int typeD) {
+    public int findActualDamage(int typeD, int rawDamage) {
         String effect = "";
+        int actualDamage;
 
         switch (this.type) {
             case NORMAL:
@@ -211,8 +212,21 @@ public class PokemonMove {
                         effect = "Normal";
                 }
         }
+        switch (effect) {
+            case "None":
+                actualDamage = 0;
+                break;
+            case "not every effective":
+                actualDamage = rawDamage / 2;
+                break;
+            case "Normal":
+                actualDamage = rawDamage;
+                break;
+            default:
+                actualDamage = rawDamage * 2;
+        }
 
-        return effect;
+        return actualDamage;
     }
 
     // using equation to calculate damage from actual pokemon game !!! does not consider effect from types
@@ -222,6 +236,15 @@ public class PokemonMove {
         int d1 = ((2 * level) / 5) + 2;
         int d2 = (d1 * power * attack) / defence;
         return (d2 / 50) + 2;
+    }
+
+    /**
+     * Return the move's accuracy to caller.
+     *
+     * @return the move's accuracy.
+     */
+    public int getAccuracy() {
+        return accuracy;
     }
 
     /**
