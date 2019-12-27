@@ -7,6 +7,7 @@ package main;
 public class PokemonMove {
     private final int type;
     private final String name;
+    private final int initialPP;
     private int pp;
     private final int power;
     private int accuracy;
@@ -104,12 +105,123 @@ public class PokemonMove {
                 type = NORMAL; pp = 100; power = 5; accuracy = 90;
                 System.out.println("The move "+move+" was not recognized!");
         }
+        initialPP = pp;
     }
 
+    public void consumePP() {
+        pp --;
+    }
 
-    public int dealDamage(int[] characterStats) {
-        // uses input stats to return damage infilicted in attack
-        return 0;
+    public String findEffect(int typeD) {
+        String effect = "";
+
+        switch (this.type) {
+            case NORMAL:
+                if (typeD == GHOST)
+                    effect = "None";
+                else
+                    effect = "Normal";
+                break;
+            case FIRE:
+                switch (typeD) {
+                    case FIRE:
+                    case WATER:
+                    case DRAGON:
+                        effect = "not every effective";
+                        break;
+                    case GRASS:
+                        effect = "super effective";
+                        break;
+                    default:
+                        effect = "Normal";
+                }
+                break;
+            case WATER:
+                switch (typeD) {
+                    case FIRE:
+                        effect = "super effective";
+                        break;
+                    case WATER:
+                    case GRASS:
+                    case DRAGON:
+                        effect = "not every effective";
+                        break;
+                    default:
+                        effect = "Normal";
+                }
+                break;
+            case ELECTRIC:
+                switch (typeD) {
+                    case WATER:
+                        effect = "super effective";
+                        break;
+                    case ELECTRIC:
+                    case GRASS:
+                    case DRAGON:
+                        effect = "not every effective";
+                        break;
+                    default:
+                        effect = "Normal";
+                }
+                break;
+            case GRASS:
+                switch (typeD) {
+                    case FIRE:
+                    case GRASS:
+                    case DRAGON:
+                        effect = "not every effective";
+                        break;
+                    case 3:
+                        effect = "super effective";
+                        break;
+                    default:
+                        effect = "Normal";
+                }
+                break;
+            case DRAGON:
+                if (typeD == DRAGON)
+                    effect = "super effective";
+                else
+                    effect = "Normal";
+                break;
+            case GHOST:
+                switch (typeD) {
+                    case NORMAL:
+                        effect = "None";
+                        break;
+                    case GHOST:
+                        effect = "super effective";
+                        break;
+                    case DARK:
+                        effect = "not every effective";
+                        break;
+                    default:
+                        effect = "Normal";
+                }
+                break;
+            case DARK:
+                switch (typeD) {
+                    case GHOST:
+                        effect = "super effective";
+                        break;
+                    case DARK:
+                        effect = "not every effective";
+                        break;
+                    default:
+                        effect = "Normal";
+                }
+        }
+
+        return effect;
+    }
+
+    // using equation to calculate damage from actual pokemon game !!! does not consider effect from types
+    // ((((2*stats[0])/5+2)*power*a)/(50*statsC[2])+2);
+    // attack and level from user of move, defence from character being hit.
+    public int calculateRawDamage(int level, int attack, int defence) {
+        int d1 = ((2 * level) / 5) + 2;
+        int d2 = (d1 * power * attack) / defence;
+        return (d2 / 50) + 2;
     }
 
     /**
@@ -137,5 +249,14 @@ public class PokemonMove {
      */
     public int getPP() {
         return pp;
+    }
+
+    /**
+     * Return the move's initial pp to caller.
+     *
+     * @return the move's initial pp.
+     */
+    public int getInitialPP() {
+        return initialPP;
     }
 }

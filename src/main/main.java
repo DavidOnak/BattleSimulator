@@ -16,9 +16,9 @@ public class main {
     public static void main(String[] args) {
 
         //open new frame
-       new MoveSelection(2);
+       //new MoveSelection(2);
        //new IntroFrame();
-        //new BattleScreen(2, 1, 1);
+        new BattleScreen(2, 1, 6);
 
     }
 }

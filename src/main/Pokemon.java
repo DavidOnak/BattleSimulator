@@ -13,7 +13,7 @@ public class Pokemon {
     private final String[] LEGENDARY = {"Mew", "Lugia", "Palkia", "Death Angle"};
     private final String[] REGULAR = {"Charizard", "Pikachu", "Zubat", "Ditto", "Poliwhirl", "Weedle", "Oddish", "Eevee"};
 
-    public Pokemon(int tier) {
+    public Pokemon(int tier) { // animation buggy for Ditto, Poliwhirl, pickachu
         switch (tier) {
             case 1: //levels 10 to 25
                 level = (int) (15 * Math.random() + 10);
