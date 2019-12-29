@@ -117,27 +117,23 @@ public class BattleScreen extends JFrame {
         lblPlayerText.setText("You used " + move.getName() + "!");
 
         // get raw damage and apply effect
-        int rawDamage = move.calculateRawDamage(1,1,1); //TODO
-        int actualDamage = move.findActualDamage(1, rawDamage); // TODO
+        int rawDamage = move.calculateRawDamage(player.getLevel(),player.getAttack(),pokemon.getDefence());
+        int actualDamage = move.findActualDamage(pokemon.getFirstType(), rawDamage);
         if (pokemon.getSecondType() != 0)
             actualDamage = move.findActualDamage(pokemon.getSecondType(), actualDamage);
 
         // get random factor in attacks
         int random = (int) (15 * Math.random() + 85);
         int damage = (actualDamage * random) / 100;
-        waitOneSecond();
 
         // determine if a hit or miss
         Random rand = new Random();
-        if (rand.nextInt(100) < move.getAccuracy()) {
-            System.out.println(rand.nextInt(100)); // TODO: remove this
+        if (rand.nextInt(100) <= move.getAccuracy()) {
 
             // deal damage
             pokemon.dealDamage(damage);
-            while (pbCompHealth.getValue() > pokemon.getHealth()) {
-                pbCompHealth.setValue(pbCompHealth.getValue() - 1);
-                waitABit();
-            }
+            fill(pokemon.getHealth());
+
             // give effect message
             if (actualDamage == 0)
                 lblPlayerText.setText("You used " + move.getName() + ", it has no effect!");
@@ -145,24 +141,86 @@ public class BattleScreen extends JFrame {
                 lblPlayerText.setText("You used " + move.getName() + ", it is super effective!");
             else if (rawDamage > actualDamage)
                 lblPlayerText.setText("You used " + move.getName() + ", it is not very effective!");
+
+            if (pokemon.getHealth() == 0) {
+                // TODO: link to method if pokemon fainted
+                lblBattleText3.setText(pCharacter + " has fainted!");
+                stats[6] = stats[6] + xpP;
+                pbExperience.setValue(stats[6]);
+                lblPokemon.setIcon(null);
+                if (stats[6] >= xpr) {
+                    stats[6] = stats[6] - xpr;
+                    pbExperience.setValue(stats[6]);
+                    stats[0]++;
+                    lblPokeLevel1.setText("Lv." + stats[0]);
+                }
+                numOpp--;
+                moveLearned();
+                if (numOpp > 0) {
+                    btnNext.setEnabled(true);
+                    //add xp
+                } else {
+                    //make method for xp!
+                    //make pokemon dissapear
+                    btnReturn.setEnabled(true);
+                }
+            } else {
+                // TODO: link to method pokemon attack
+            }
+
         } else {
             lblPlayerText.setText("You used " + move.getName() + ", but it missed!");
         }
     }
 
-    private void waitOneSecond() {
+    // function to increase progress
+    private void fill(int targetHealth) {
+        int i = pbCompHealth.getValue();
+        System.out.println("Going to " + targetHealth);
         try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException ex) {
-            System.out.println("Interrupted Exception from one second delay");
+            while (i > targetHealth) {
+                // delay the thread
+                Thread.sleep(200);
+                pbCompHealth.paintImmediately(0, 0, 200, 200);
+                pbCompHealth.setValue(i - 1);
+                i --;
+
+                colourCheck();
+            }
+        }
+        catch (Exception e) {
+            // TODO: MESSEafe
         }
     }
 
-    private void waitABit() {
-        try {
-            TimeUnit.MILLISECONDS.sleep(250);
-        } catch (InterruptedException ex) {
-            System.out.println("Interrupted Exception from one second delay");
+    private void colourCheck () {
+        double health = pokemon.getHealth();
+        double initialHealth = pokemon.getInitialHealth();
+        double percent = (health / initialHealth) * 100;
+
+        //pbCompHealth.setForeground(new Color(51, 255, 51));
+
+        if (percent <= 90) {
+            if (percent > 85)
+                pbCompHealth.setForeground(new Color(86, 255, 47));
+            else if (percent > 75)
+                pbCompHealth.setForeground(new Color(189, 255, 49));
+            else if (percent > 65)
+                pbCompHealth.setForeground(new Color(232, 255, 46));
+            else if (percent > 60)
+                pbCompHealth.setForeground(new Color(255, 241, 41));
+            else if (percent > 50)
+                pbCompHealth.setForeground(new Color(255, 207, 34));
+            else if (percent > 40)
+                pbCompHealth.setForeground(new Color(255, 174, 37));
+            else if (percent > 30)
+                pbCompHealth.setForeground(new Color(255, 135, 41));
+            else if (percent > 20)
+                pbCompHealth.setForeground(new Color(255, 104, 39));
+            else if (percent > 10)
+                pbCompHealth.setForeground(new Color(255, 80, 38));
+            else
+                pbCompHealth.setForeground(new Color(255, 46, 31));
         }
     }
 

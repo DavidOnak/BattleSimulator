@@ -18,7 +18,8 @@ public class main {
         //open new frame
        //new MoveSelection(2);
        //new IntroFrame();
-        new BattleScreen(2, 1, 6);
-
+        new BattleScreen(2, 1, 1);
+        //test testy = new test();
+       // testy.setVisible(true);
     }
 }

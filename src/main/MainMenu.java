@@ -2,6 +2,7 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.JOptionPane;
 import java.io.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -115,9 +116,6 @@ public class MainMenu extends JFrame {
 
         if (1 <= numOpponents && numOpponents <= 10) {
             validText = true;
-        }
-
-        if (validText) {
             btnStartBattle.setEnabled(true);
             btnTier1.setEnabled(false);
             btnTier2.setEnabled(false);
@@ -126,9 +124,10 @@ public class MainMenu extends JFrame {
             btnTier5.setEnabled(false);
             btnTier6.setEnabled(false);
             tfNumOpp.setEditable(false);
+        } else {
+            JOptionPane.showMessageDialog(null, "Please enter a number from 1 to 10.");
         }
         return validText;
-
     }
 
     /**

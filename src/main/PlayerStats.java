@@ -38,6 +38,15 @@ public class PlayerStats {
     }
 
     /**
+     * Return the player's attack to caller.
+     *
+     * @return the attack of the player.
+     */
+    public int getAttack() {
+        return stats[2];
+    }
+
+    /**
      * Return the player level to caller.
      *
      * @return the level of the player.

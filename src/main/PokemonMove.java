@@ -84,7 +84,7 @@ public class PokemonMove {
                 type = GHOST; pp = 15; power = 80; accuracy = 100; //may lowers opponents defence %20
                 break;
             case "Night Daze":
-                type = DARK; pp = 5; power = 150; accuracy = 90; //may lower opponents acurracy 40%
+                type = DARK; pp = 5; power = 150; accuracy = 90; //may lower opponents acurracy 40% chance
                 break;
             case "V-create":
                 type = FIRE; pp = 15; power = 80; accuracy = 100; //may lowers opponents defence %20
