@@ -5,6 +5,7 @@ import java.awt.*;
 import java.io.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -79,7 +80,7 @@ public class NewSave extends JFrame {
         if (saveSlot == 1) { // for slot 1
             System.out.println("This is save 1");
             try { // create save file
-                PrintWriter writer = new PrintWriter("Slot1.txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("Slot1.txt", StandardCharsets.UTF_8);
                 writer.println(name);
                 writer.println(gender);
                 writer.close();
@@ -88,7 +89,7 @@ public class NewSave extends JFrame {
                 System.err.println("IOException: " + ex.getMessage());
             }
             try { // create unlocks file
-                PrintWriter writer = new PrintWriter("Slot1unlocks.txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("Slot1unlocks.txt", StandardCharsets.UTF_8);
                 writer.close();
             } catch (IOException ex) {
                 System.out.println("Problem reading file.");
@@ -111,7 +112,7 @@ public class NewSave extends JFrame {
         } else if (saveSlot == 2) { // for slot 2
             System.out.println("This is save 2");
             try { // create save file
-                PrintWriter writer = new PrintWriter("Slot2.txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("Slot2.txt", StandardCharsets.UTF_8);
                 writer.println(name);
                 writer.println(gender);
                 writer.close();
@@ -120,7 +121,7 @@ public class NewSave extends JFrame {
                 System.err.println("IOException: " + ex.getMessage());
             }
             try { // create unlocks file
-                PrintWriter writer = new PrintWriter("Slot2unlocks.txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("Slot2unlocks.txt", StandardCharsets.UTF_8);
                 writer.close();
             } catch (IOException ex) {
                 System.out.println("Problem reading file.");
@@ -143,7 +144,7 @@ public class NewSave extends JFrame {
         } else if (saveSlot == 3) { // if slot 3
             System.out.println("This is save 3");
             try { // create save file
-                PrintWriter writer = new PrintWriter("Slot3.txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("Slot3.txt", StandardCharsets.UTF_8);
                 writer.println(name);
                 writer.println(gender);
                 writer.close();
@@ -152,7 +153,7 @@ public class NewSave extends JFrame {
                 System.err.println("IOException: " + ex.getMessage());
             }
             try { // create unlocks file
-                PrintWriter writer = new PrintWriter("Slot3unlocks.txt", "UTF-8");
+                PrintWriter writer = new PrintWriter("Slot3unlocks.txt", StandardCharsets.UTF_8);
                 writer.close();
             } catch (IOException ex) {
                 System.out.println("Problem reading file.");

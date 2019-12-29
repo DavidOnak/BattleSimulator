@@ -33,6 +33,7 @@ public class PlayerStats {
         health = stats[1];
         healthInitial = stats[1];
         xp = stats[6];
+        System.out.println(xp  + " 88888888888888888888");
 
         calculateNextLevel(level);
     }
@@ -184,7 +185,7 @@ public class PlayerStats {
             case 1:
                 try {
                     Scanner scanner = new Scanner(new FileReader("Slot1stats.txt"));
-                    for (int t = 0; t < 6; t++) {
+                    for (int t = 0; t < 7; t++) {
                         stats[t] = scanner.nextInt();
                     }
                 } catch (IOException e) {
@@ -194,7 +195,7 @@ public class PlayerStats {
             case 2:
                 try {
                     Scanner scanner = new Scanner(new FileReader("Slot2stats.txt"));
-                    for (int t = 0; t < 6; t++) {
+                    for (int t = 0; t < 7; t++) {
                         stats[t] = scanner.nextInt();
                     }
                 } catch (IOException e) {
