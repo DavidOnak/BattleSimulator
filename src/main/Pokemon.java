@@ -206,6 +206,11 @@ public class Pokemon {
             health = 0;
     }
 
+    public int getXPReward() {
+
+        return 25;
+    }
+
     /**
      * Return the pokemon's defence to caller.
      *

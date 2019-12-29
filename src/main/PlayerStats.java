@@ -34,7 +34,7 @@ public class PlayerStats {
         healthInitial = stats[1];
         xp = stats[6];
 
-        calculateNextLevel();
+        calculateNextLevel(level);
     }
 
     /**
@@ -94,8 +94,8 @@ public class PlayerStats {
     /**
      * Calculate value for nextLevel.
      */
-    private void calculateNextLevel() {
-        nextLevelXP = (int) (1.7*level) + 15;
+    public int calculateNextLevel(int level) {
+        return nextLevelXP = (int) (1.7*level) + 15;
     }
 
     /**
@@ -104,16 +104,17 @@ public class PlayerStats {
      *
      * @param xpAdd, amount of xp to add to existing amount.
      */
-    public void AddXP(int xpAdd) {
+    public void addXP(int xpAdd) {
         int newXP = xp + xpAdd;
 
         while (newXP >= nextLevelXP) {
             newXP -= nextLevelXP;
             levelUp();
-            calculateNextLevel();
+            calculateNextLevel(level);
         }
 
         stats[6] = newXP;
+        xp = newXP;
 
         storeStats();
     }

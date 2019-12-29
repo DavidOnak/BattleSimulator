@@ -14,8 +14,6 @@ import java.util.concurrent.TimeUnit;
  * @author David Onak
  */
 public class BattleScreen extends JFrame {
-    // TODO: JavaDOX!!!, it stats for moves make each player type a constant so ex. NORMAL is 1
-//FOR BATTLE SCREEN HAVE MOVE Class have method for damage(return int array to account multi hit) and effect in stats(return string array) repretly
     private JFrame battleScreen;
     private JButton btnMove1;
     private JButton btnMove2;
@@ -26,6 +24,7 @@ public class BattleScreen extends JFrame {
     private JLabel lblBattleField;
     private JLabel lblPlayerText;
     private JLabel lblPokemonText;
+    private JLabel lblPokemonText2;
     private JLabel lblPlayerInfo;
     private JLabel lblCompInfo;
     private JLabel lblPlayer;
@@ -50,7 +49,13 @@ public class BattleScreen extends JFrame {
     private PlayerStats player;
     private Pokemon pokemon;
 
-    // ADD JAVADOX
+    /**
+     * Constructor that generates the battle screen in this application.
+     *
+     * @param saveSlot the save to retrieve and store stats from.
+     * @param numOpp the number of Pokemon to battle.
+     * @param tier the tier level for the opponent Pokemon.
+     */
     public BattleScreen(int saveSlot, int numOpp, int tier) {
         this.saveSlot = saveSlot;
         numOfOpp = numOpp;
@@ -71,7 +76,10 @@ public class BattleScreen extends JFrame {
         buttonActivation();
     }
 
-    // ADD JAVADOX
+    /**
+     * Activates 4 buttons representing the players moves to attack opponent, a button to get next Pokemon, and
+     * a button to go back to the main menue.
+     */
     private void buttonActivation() {
         btnMove1.addActionListener(e -> {
             playerMove1.consumePP();
@@ -106,14 +114,21 @@ public class BattleScreen extends JFrame {
             playerAttack(playerMove4);
         });
         btnNext.addActionListener(e -> {
-
+            pokemon = new Pokemon(tier);
+            makeFrame();
         });
         btnReturn.addActionListener(e -> {
-
+            new MainMenu(saveSlot);
+            battleScreen.dispose();
         });
     }
 
-    private void playerAttack(PokemonMove move) { // maybe change type to double, easy to do, just run effects with damage twice
+    /**
+     * Performs attack of player onto the opponent pokemon with a given move.
+     *
+     * @param move the PokemonMove to attack with.
+     */
+    private void playerAttack(PokemonMove move) {
         lblPlayerText.setText("You used " + move.getName() + "!");
 
         // get raw damage and apply effect
@@ -132,7 +147,7 @@ public class BattleScreen extends JFrame {
 
             // deal damage
             pokemon.dealDamage(damage);
-            fill(pokemon.getHealth());
+            drainPokemonHealth(pokemon.getHealth());
 
             // give effect message
             if (actualDamage == 0)
@@ -143,58 +158,89 @@ public class BattleScreen extends JFrame {
                 lblPlayerText.setText("You used " + move.getName() + ", it is not very effective!");
 
             if (pokemon.getHealth() == 0) {
-                // TODO: link to method if pokemon fainted
-                lblBattleText3.setText(pCharacter + " has fainted!");
-                stats[6] = stats[6] + xpP;
-                pbExperience.setValue(stats[6]);
+                lblPokemonText2.setText(pokemon.getName() + " has fainted!");
+                int originalLevel = player.getLevel();
+                player.addXP(pokemon.getXPReward());
                 lblPokemon.setIcon(null);
-                if (stats[6] >= xpr) {
-                    stats[6] = stats[6] - xpr;
-                    pbExperience.setValue(stats[6]);
-                    stats[0]++;
-                    lblPokeLevel1.setText("Lv." + stats[0]);
+
+                while (originalLevel <= player.getLevel()) {
+                    if (originalLevel < player.getLevel()) {
+                        addPlayerExperience(player.calculateNextLevel(originalLevel));
+                        pbExperience.setValue(0);
+                        pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
+                    } else {
+                        addPlayerExperience(player.getXP());
+                    }
+                    originalLevel ++;
                 }
-                numOpp--;
-                moveLearned();
-                if (numOpp > 0) {
+
+                lblPlayerLevel.setText("Lv." + player.getLevel());
+                // lblPlayerHealth.setText(); rise up the heath info and adjust the bar too
+                numOfOpp --;
+                 // moveLearned(); **********************************************************
+
+                if (numOfOpp > 0) {
                     btnNext.setEnabled(true);
-                    //add xp
                 } else {
-                    //make method for xp!
-                    //make pokemon dissapear
                     btnReturn.setEnabled(true);
                 }
-            } else {
+            } else { // if move hit but did not K.O
                 // TODO: link to method pokemon attack
             }
-
-        } else {
+        } else { // if move misses
             lblPlayerText.setText("You used " + move.getName() + ", but it missed!");
         }
     }
 
-    // function to increase progress
-    private void fill(int targetHealth) {
+    /**
+     * Lowers the health of the pokemon while sliding health bar down to target health.
+     *
+     * @param targetHealth the health to go down too.
+     */
+    private void drainPokemonHealth(int targetHealth) {
         int i = pbCompHealth.getValue();
         System.out.println("Going to " + targetHealth);
         try {
             while (i > targetHealth) {
                 // delay the thread
-                Thread.sleep(200);
+                Thread.sleep(175);
+
                 pbCompHealth.paintImmediately(0, 0, 200, 200);
                 pbCompHealth.setValue(i - 1);
                 i --;
 
-                colourCheck();
+                colourCheck(pbCompHealth.getValue());
             }
         }
-        catch (Exception e) {
-            // TODO: MESSEafe
+        catch (InterruptedException ex) {
+            System.out.println("An Interrupted Exception occurred when trying to stall");
         }
     }
 
-    private void colourCheck () {
-        double health = pokemon.getHealth();
+    /**
+     * Rises the experience of the player while sliding experience bar down to target experience.
+     *
+     * @param targetExperience the experience to go up too.
+     */
+    private void addPlayerExperience(int targetExperience) {
+        int i = pbExperience.getValue();
+        System.out.println("Going to " + targetExperience);
+        try {
+            while (i < targetExperience) {
+                // delay the thread
+                Thread.sleep(100);
+
+                pbExperience.paintImmediately(0, 0, 200, 200);
+                pbExperience.setValue(i + 1);
+                i ++;
+            }
+        }
+        catch (InterruptedException ex) {
+            System.out.println("An Interrupted Exception occurred when trying to stall");
+        }
+    }
+
+    private void colourCheck (double health) {
         double initialHealth = pokemon.getInitialHealth();
         double percent = (health / initialHealth) * 100;
 
@@ -465,13 +511,13 @@ public class BattleScreen extends JFrame {
         lblPokemonText = new JLabel();
         lblPokemonText.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPokemonText.setBounds(10, 590, 350, 120);
+        lblPokemonText2 = new JLabel();
+        lblPokemonText2.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPokemonText2.setBounds(360, 590, 280, 120);
+
 
         // TODO: FIX STUFF BELOW
         /*
-        lblBattleText3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        getContentPane().add(lblBattleText3);
-        lblBattleText3.setBounds(360, 590, 280, 120);
-
         lblBattleText2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         getContentPane().add(lblBattleText2);
         lblBattleText2.setBounds(360, 480, 280, 120);
@@ -485,6 +531,7 @@ public class BattleScreen extends JFrame {
         panel.add(btnMove3);
         panel.add(btnMove4);
         panel.add(lblPlayerText);
+        panel.add(lblPokemonText2);
         panel.add(lblPokemonText);
         panel.add(lblPlayerHealth);
         panel.add(lblPlayerName);
