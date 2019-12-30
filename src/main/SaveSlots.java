@@ -91,7 +91,7 @@ public class SaveSlots extends JFrame {
     private void readSaves() {
 
         // check if save 1 exists
-        File f1 = new File("Slot1.txt");
+        File f1 = new File("saves/Slot1.txt");
         if (f1.exists()) {
             System.out.println("File 1 exists!");
             try{// get name from file
@@ -106,7 +106,7 @@ public class SaveSlots extends JFrame {
         }
 
         // check if save 2 exists
-        File f2 = new File("Slot2.txt");
+        File f2 = new File("saves/Slot2.txt");
         if (f2.exists()) {
             System.out.println("File 2 exists!");
             try{//get name from file
@@ -121,7 +121,7 @@ public class SaveSlots extends JFrame {
         }
 
         //check if save 3 exists
-        File f3 = new File("Slot3.txt");
+        File f3 = new File("saves/Slot3.txt");
         if (f3.exists()) {
             System.out.println("File 3 exists!");
             try{//get name from file

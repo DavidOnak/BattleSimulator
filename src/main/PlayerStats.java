@@ -16,9 +16,12 @@ public class PlayerStats {
     private int level;
     private int xp;
     private int nextLevelXP;
+    private int attack;
+    private int defence;
+    private int speed;
     private int[] stats;
-    private int health; // does not get saved and will have method to return heath and to apply damage to it!
-    private final int healthInitial;
+    private int health; // TODO: ADD thing to stasts to save a point to add to a base stat each time levelign up
+    private int healthInitial;
 
     /**
      * Constructor that obtains data from a save.
@@ -31,9 +34,9 @@ public class PlayerStats {
 
         level = stats[0];
         health = stats[1];
-        healthInitial = stats[1];
+        useBaseStats();
         xp = stats[6];
-        System.out.println(xp  + " 88888888888888888888");
+        System.out.println(xp  + " the xp level");
 
         calculateNextLevel(level);
     }
@@ -44,7 +47,7 @@ public class PlayerStats {
      * @return the attack of the player.
      */
     public int getAttack() {
-        return stats[2];
+        return attack;
     }
 
     /**
@@ -110,7 +113,7 @@ public class PlayerStats {
 
         while (newXP >= nextLevelXP) {
             newXP -= nextLevelXP;
-            levelUp();
+            useBaseStats();
             calculateNextLevel(level);
         }
 
@@ -121,16 +124,18 @@ public class PlayerStats {
     }
 
     /**
-     * Increases level in this class and adds it to stats, then increases all other values in stats excluding xp.
+     * Using the base stats of the player, creates stats to use for battle.
      */
-    private void levelUp() {
+    private void useBaseStats() {
         level++;
         stats[0] = level;
 
-        stats[1] = (((stats[1] * 2) * stats[0]) / 100) + stats[0] + 10;
-        stats[2] = (((stats[2] * 2) * stats[0]) / 100) + 5;
-        stats[3] = (((stats[3] * 2) * stats[0]) / 100) + 5;
-        stats[4] = (((stats[4] * 2) * stats[0]) / 100) + 5;
+        healthInitial = (((stats[1] * 2) * level) / 100) + level + 10;
+        attack = (((stats[2] * 2) * level) / 100) + 5;
+        defence = (((stats[3] * 2) * level) / 100) + 5;
+        speed = (((stats[4] * 2) * level) / 100) + 5;
+
+        System.out.println("Your stats: Health " + health + ", attack " + attack + ", defence " + defence + ", speed " + speed);
     }
 
     /**
@@ -139,7 +144,7 @@ public class PlayerStats {
     private void storeStats() {
         switch (save) {
             case 1:
-                try (FileWriter fw = new FileWriter("Slot1stats.txt", false);
+                try (FileWriter fw = new FileWriter("saves/Slot1stats.txt", false);
                      BufferedWriter bw = new BufferedWriter(fw);
                      PrintWriter out = new PrintWriter(bw)) {
                     for (int t = 0; t < 7; t++) {
@@ -151,7 +156,7 @@ public class PlayerStats {
                 }
                 break;
             case 2:
-                try (FileWriter fw = new FileWriter("Slot2stats.txt", false);
+                try (FileWriter fw = new FileWriter("saves/Slot2stats.txt", false);
                      BufferedWriter bw = new BufferedWriter(fw);
                      PrintWriter out = new PrintWriter(bw)) {
                     for (int t = 0; t < 7; t++) {
@@ -163,7 +168,7 @@ public class PlayerStats {
                 }
                 break;
             case 3:
-                try (FileWriter fw = new FileWriter("Slot3stats.txt", false);
+                try (FileWriter fw = new FileWriter("saves/Slot3stats.txt", false);
                      BufferedWriter bw = new BufferedWriter(fw);
                      PrintWriter out = new PrintWriter(bw)) {
                     for (int t = 0; t < 7; t++) {
@@ -184,7 +189,7 @@ public class PlayerStats {
         switch (save) {//retreive stats file
             case 1:
                 try {
-                    Scanner scanner = new Scanner(new FileReader("Slot1stats.txt"));
+                    Scanner scanner = new Scanner(new FileReader("saves/Slot1stats.txt"));
                     for (int t = 0; t < 7; t++) {
                         stats[t] = scanner.nextInt();
                     }
@@ -194,7 +199,7 @@ public class PlayerStats {
                 break;
             case 2:
                 try {
-                    Scanner scanner = new Scanner(new FileReader("Slot2stats.txt"));
+                    Scanner scanner = new Scanner(new FileReader("saves/Slot2stats.txt"));
                     for (int t = 0; t < 7; t++) {
                         stats[t] = scanner.nextInt();
                     }
@@ -204,7 +209,7 @@ public class PlayerStats {
                 break;
             case 3:
                 try {
-                    Scanner scanner = new Scanner(new FileReader("Slot3stats.txt"));
+                    Scanner scanner = new Scanner(new FileReader("saves/Slot3stats.txt"));
                     for (int t = 0; t < 7; t++) {
                         stats[t] = scanner.nextInt();
                     }

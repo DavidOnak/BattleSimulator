@@ -191,12 +191,12 @@ public class Pokemon {
     private void generateStats(int hp, int attack, int defence, int speed, int firstType, int secondType) {
         type1 = firstType;
         type2 = secondType;
-        health = (((hp * 2) * level) / 100) + level + 10;
-        this.attack = (((attack * 2) * level) / 100) + 5;
-        this.defence = (((defence * 2) * level) / 100) + 5;
-        this.speed = (((speed * 2) * level) / 100) + 5;
+        health = ((hp * 2 * level) / 100) + level + 10;
+        this.attack = ((attack * 2 * level) / 100) + 5;
+        this.defence = ((defence * 2 * level) / 100) + 5;
+        this.speed = ((speed * 2 * level) / 100) + 5;
         initialHealth = health;
-        System.out.println("Health " + health + ", attack " + attack + ", defence " + defence + ", speed " + speed);
+        System.out.println("Health " + health + ", attack " + this.attack + ", defence " + this.defence + ", speed " + this.speed);
     }
 
     public void dealDamage(int damage) {
@@ -208,7 +208,7 @@ public class Pokemon {
 
     public int getXPReward() {
 
-        return 25;
+        return 150;
     }
 
     /**

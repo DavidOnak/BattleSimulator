@@ -344,7 +344,7 @@ public class MoveSelection {
             case 1:
                 try { // get moves from file
                     System.out.println("checking unlocks for save 1");
-                    FileReader s = new FileReader("Slot1unlocks.txt");
+                    FileReader s = new FileReader("saves/Slot1unlocks.txt");
                     BufferedReader br = new BufferedReader(s);
                     for (int m = 0; m < 10; m++)
                         unlocked.add(br.readLine());
@@ -355,7 +355,7 @@ public class MoveSelection {
             case 2:
                 try { // get moves from file
                     System.out.println("checking unlocks for save 2");
-                    FileReader s = new FileReader("Slot2unlocks.txt");
+                    FileReader s = new FileReader("saves/Slot2unlocks.txt");
                     BufferedReader br = new BufferedReader(s);
                     for (int m = 0; m < 10; m++)
                         unlocked.add(br.readLine());
@@ -366,7 +366,7 @@ public class MoveSelection {
             case 3:
                 try { // get moves from file
                     System.out.println("checking unlocks for save 3");
-                    FileReader s = new FileReader("Slot3unlocks.txt");
+                    FileReader s = new FileReader("saves/Slot3unlocks.txt");
                     BufferedReader br = new BufferedReader(s);
                     for (int m = 0; m < 10; m++)
                         unlocked.add(br.readLine());
@@ -420,7 +420,7 @@ public class MoveSelection {
      * @param file the text file to write too.
      */
     private void storeMoves(String file) {
-        if (file.equals("Slot1.txt") || file.equals("Slot2.txt") || file.equals("Slot3.txt")) {
+        if (file.equals("saves/Slot1.txt") || file.equals("saves/Slot2.txt") || file.equals("saves/Slot3.txt")) {
             try (FileWriter fw = new FileWriter(file, false);
                  BufferedWriter bw = new BufferedWriter(fw);
                  PrintWriter out = new PrintWriter(bw)) {
@@ -436,13 +436,13 @@ public class MoveSelection {
         } else {
             switch (saveSlot) {
                 case 1:
-                    storeMoves("Slot1.txt");
+                    storeMoves("saves/Slot1.txt");
                     break;
                 case 2:
-                    storeMoves("Slot2.txt");
+                    storeMoves("saves/Slot2.txt");
                     break;
                 case 3:
-                    storeMoves("Slot3.txt");
+                    storeMoves("saves/Slot3.txt");
             }
         }
     }
@@ -453,13 +453,13 @@ public class MoveSelection {
     private void getMoves() {
         switch (saveSlot) { // retrieve moves
             case 1:
-                readMoves("Slot1.txt");
+                readMoves("saves/Slot1.txt");
                 break;
             case 2:
-                readMoves("Slot2.txt");
+                readMoves("saves/Slot2.txt");
                 break;
             case 3:
-                readMoves("Slot3.txt");
+                readMoves("saves/Slot3.txt");
         }
 
         // remove null entries in move ArrayList

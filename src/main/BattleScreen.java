@@ -2,9 +2,7 @@ package main;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +21,7 @@ public class BattleScreen extends JFrame {
     private JButton btnReturn;
     private JLabel lblBattleField;
     private JLabel lblPlayerText;
+    private JLabel lblPlayerText2;
     private JLabel lblPokemonText;
     private JLabel lblPokemonText2;
     private JLabel lblPlayerInfo;
@@ -78,7 +77,7 @@ public class BattleScreen extends JFrame {
 
     /**
      * Activates 4 buttons representing the players moves to attack opponent, a button to get next Pokemon, and
-     * a button to go back to the main menue.
+     * a button to go back to the main menu.
      */
     private void buttonActivation() {
         btnMove1.addActionListener(e -> {
@@ -168,16 +167,16 @@ public class BattleScreen extends JFrame {
                         addPlayerExperience(player.calculateNextLevel(originalLevel));
                         pbExperience.setValue(0);
                         pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
+                        moveLearned();
+                        lblPlayerLevel.setText("Lv." + player.getLevel());
                     } else {
                         addPlayerExperience(player.getXP());
                     }
                     originalLevel ++;
                 }
 
-                lblPlayerLevel.setText("Lv." + player.getLevel());
                 // lblPlayerHealth.setText(); rise up the heath info and adjust the bar too
                 numOfOpp --;
-                 // moveLearned(); **********************************************************
 
                 if (numOfOpp > 0) {
                     btnNext.setEnabled(true);
@@ -189,6 +188,99 @@ public class BattleScreen extends JFrame {
             }
         } else { // if move misses
             lblPlayerText.setText("You used " + move.getName() + ", but it missed!");
+        }
+    }
+
+    private void moveLearned() {
+        boolean learned = false;
+        int check = player.getLevel();
+
+        // unlock moves up to level 60
+        if (check <= 60) {
+            // check if multiple of 5
+            while (check > 0) {
+                check -= 5;
+                if (check == 0) {
+                    learned = true;
+                }
+            }
+        }
+
+        if (learned) {
+            ArrayList<String> unlocks = new ArrayList<>();
+            switch (saveSlot) {
+                case 1:
+                    unlocks = retrieveUnlocks("saves/Slot1unlocks.txt");
+                    break;
+                case 2:
+                    unlocks = retrieveUnlocks("saves/Slot2unlocks.txt");
+                    break;
+                case 3:
+                    unlocks = retrieveUnlocks("saves/Slot3unlocks.txt");
+            }
+
+            String[] extraMoves = {"Judgment", "V-create", "Hydro Cannon", "Parabolic Charge", "Cotton Guard",
+                    "Clanging Scales", "Shadow Ball", "Snarl", "Night Daze", "Illuminati"};
+            String unlocked = "";
+
+            if (unlocks.size() < 9) {
+                // get new move that has not been unlocked yet
+                int u = (int) (9 * Math.random());
+                while (unlocks.contains(extraMoves[u])) {
+                    u = (int) (9 * Math.random());
+                }
+
+                unlocks.add(extraMoves[u]);
+                unlocked = extraMoves[u];
+
+            } else if (unlocks.size() == 9) {
+                unlocked = extraMoves[9];
+            }
+
+            // store unlocks
+            switch (saveSlot) {
+                case 1:
+                    storeUnlocks("saves/Slot1unlocks.txt", unlocks);
+                    break;
+                case 2:
+                    storeUnlocks("saves/Slot2unlocks.txt", unlocks);
+                    break;
+                case 3:
+                    storeUnlocks("saves/Slot3unlocks.txt", unlocks);
+            }
+
+            if (!unlocked.equals(""))
+                lblPlayerText2.setText("You unlocked " + unlocked);
+        }
+    }
+
+    private ArrayList<String> retrieveUnlocks(String file) {
+        ArrayList<String> unlocks = new ArrayList<>();
+
+        try {
+            FileReader fr = new FileReader(file);
+            BufferedReader br = new BufferedReader(fr);
+            String move = br.readLine();
+            while (move != null) {
+                unlocks.add(move);
+                move = br.readLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Something went wrong reading the file.");
+        }
+
+        return unlocks;
+    }
+
+    private void storeUnlocks(String file, ArrayList<String> unlocks) {
+        try (FileWriter fw = new FileWriter(file, false);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            for (String move: unlocks) {
+                out.println(move);
+            }
+        } catch (IOException e) {
+            System.out.println("Something went wrong writing the file.");
         }
     }
 
@@ -230,7 +322,7 @@ public class BattleScreen extends JFrame {
                 // delay the thread
                 Thread.sleep(100);
 
-                pbExperience.paintImmediately(0, 0, 200, 200);
+                pbExperience.paintImmediately(0, 0, 270, 200);
                 pbExperience.setValue(i + 1);
                 i ++;
             }
@@ -277,13 +369,13 @@ public class BattleScreen extends JFrame {
     private void getMoves() {
         switch (saveSlot) { // retrieve moves
             case 1:
-                readMoves("Slot1.txt");
+                readMoves("saves/Slot1.txt");
                 break;
             case 2:
-                readMoves("Slot2.txt");
+                readMoves("saves/Slot2.txt");
                 break;
             case 3:
-                readMoves("Slot3.txt");
+                readMoves("saves/Slot3.txt");
         }
     }
 
@@ -506,6 +598,9 @@ public class BattleScreen extends JFrame {
         lblPlayerText = new JLabel("A wild "+pokemon.getName()+" appeared! What do you use?");
         lblPlayerText.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPlayerText.setBounds(10, 480, 340, 120);
+        lblPlayerText2 = new JLabel();
+        lblPlayerText2.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPlayerText2.setBounds(360, 480, 280, 120);
 
         // add text on pokemon
         lblPokemonText = new JLabel();
@@ -515,14 +610,6 @@ public class BattleScreen extends JFrame {
         lblPokemonText2.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPokemonText2.setBounds(360, 590, 280, 120);
 
-
-        // TODO: FIX STUFF BELOW
-        /*
-        lblBattleText2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        getContentPane().add(lblBattleText2);
-        lblBattleText2.setBounds(360, 480, 280, 120);
-*/
-
         //add components to panel
         panel.add(btnNext);
         panel.add(btnReturn);
@@ -531,6 +618,7 @@ public class BattleScreen extends JFrame {
         panel.add(btnMove3);
         panel.add(btnMove4);
         panel.add(lblPlayerText);
+        panel.add(lblPlayerText2);
         panel.add(lblPokemonText2);
         panel.add(lblPokemonText);
         panel.add(lblPlayerHealth);
