@@ -130,15 +130,10 @@ public class BattleScreen extends JFrame {
     private void playerAttack(PokemonMove move) {
         lblPlayerText.setText("You used " + move.getName() + "!");
 
-        // get raw damage and apply effect
-        int rawDamage = move.calculateRawDamage(player.getLevel(),player.getAttack(),pokemon.getDefence());
-        int actualDamage = move.findActualDamage(pokemon.getFirstType(), rawDamage);
-        if (pokemon.getSecondType() != 0)
-            actualDamage = move.findActualDamage(pokemon.getSecondType(), actualDamage);
-
-        // get random factor in attacks
-        int random = (int) (15 * Math.random() + 85);
-        int damage = (actualDamage * random) / 100;
+        // get potential damage from move
+        int damage = move.determineDamage(player.getLevel(), player.getAttack(), pokemon.getDefence(), pokemon.getFirstType(), pokemon.getSecondType());
+        int actualDamage = move.getActualDamage();
+        int rawDamage = move.getRawDamage();
 
         // determine if a hit or miss
         Random rand = new Random();
@@ -172,11 +167,12 @@ public class BattleScreen extends JFrame {
                     } else {
                         addPlayerExperience(player.getXP());
                     }
-                    originalLevel ++;
+                    originalLevel++;
                 }
 
+                lblPlayerHealth.setText(player.getHealth() + "/" + player.getInitialHealth());
                 // lblPlayerHealth.setText(); rise up the heath info and adjust the bar too
-                numOfOpp --;
+                numOfOpp--;
 
                 if (numOfOpp > 0) {
                     btnNext.setEnabled(true);
@@ -184,10 +180,49 @@ public class BattleScreen extends JFrame {
                     btnReturn.setEnabled(true);
                 }
             } else { // if move hit but did not K.O
-                // TODO: link to method pokemon attack
+                // TODO: adjust text and health bar
+                // determine if a hit or miss
+
+            }
+        }
+    }
+
+    private void pokemonMove() {
+        // AI to get move to attack with
+        PokemonMove attackMove = pokemon.chooseMove(player.getDefence(), player.getType());
+        pokemon.removePP(attackMove);
+
+        // TODO: do earier text here
+
+        // get damage with move
+        int damage = attackMove.determineDamage(player.getLevel(), player.getAttack(), pokemon.getDefence(), pokemon.getFirstType(), pokemon.getSecondType());
+        int actualDamage = attackMove.getActualDamage();
+        int rawDamage = attackMove.getRawDamage();
+
+        // determine if a hit or miss
+        Random rand = new Random();
+        if (rand.nextInt(100) <= attackMove.getAccuracy()) {
+
+            // deal damage
+            player.dealDamage(damage);
+            // TODO: drainPokemonHealth(pokemon.getHealth()); also deals with health text
+
+            // give effect message
+            if (actualDamage == 0)
+                lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", it has no effect!");
+            else if (actualDamage > rawDamage)
+                lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", it is super effective!");
+            else if (rawDamage > actualDamage)
+                lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", it is not very effective!");
+
+            if (player.getHealth() == 0) {
+                lblPlayerText2.setText("You have fainted!");
+                lblPlayer.setIcon(null);
+
+                btnReturn.setEnabled(true);
             }
         } else { // if move misses
-            lblPlayerText.setText("You used " + move.getName() + ", but it missed!");
+            lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", but it missed!");
         }
     }
 
@@ -597,10 +632,10 @@ public class BattleScreen extends JFrame {
         // add text on player
         lblPlayerText = new JLabel("A wild "+pokemon.getName()+" appeared! What do you use?");
         lblPlayerText.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPlayerText.setBounds(10, 480, 340, 120);
+        lblPlayerText.setBounds(10, 480, 350, 120);
         lblPlayerText2 = new JLabel();
         lblPlayerText2.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPlayerText2.setBounds(360, 480, 280, 120);
+        lblPlayerText2.setBounds(380, 480, 280, 120);
 
         // add text on pokemon
         lblPokemonText = new JLabel();

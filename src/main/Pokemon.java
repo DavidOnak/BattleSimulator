@@ -1,5 +1,9 @@
 package main;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  *
  * @author David Onak
@@ -13,7 +17,7 @@ public class Pokemon {
     private int defence;
     private int speed;
     private int health;
-    private int initialHealth; // change this to final
+    private int initialHealth;
     private int[] stats;
     private PokemonMove move1;
     private PokemonMove move2;
@@ -29,6 +33,8 @@ public class Pokemon {
     private final int DARK = 8;
     private final String[] LEGENDARY = {"Mew", "Lugia", "Palkia", "Death Angle"};
     private final String[] REGULAR = {"Charizard", "Pikachu", "Zubat", "Ditto", "Poliwhirl", "Weedle", "Oddish", "Eevee"};
+    private final String[] SECOND = {"Mew", "Lugia", "Palkia", "Death Angle"};
+    private final String[] THIRD = {"Mew", "Lugia", "Palkia", "Death Angle"};
 
     // for ai make 3 array lists for thresholds, eg pick random from this when hp is over 80 percent, pick most damaging when over 20 percent,
     // added in these if contain in overage list for that catagory
@@ -204,6 +210,81 @@ public class Pokemon {
 
         if (health < 0)
             health = 0;
+    }
+
+    public PokemonMove chooseMove(int playerD, int playerT) {
+        List<String> secondMoves = Arrays.asList(SECOND);
+        List<String> thirdMoves = Arrays.asList(THIRD);
+        double initialHealth = this.initialHealth;
+        double percent = (health / initialHealth) * 100;
+
+        ArrayList<PokemonMove> firstContained = new ArrayList<>();
+        if (move1.getPower() == 0 && move1.getPP() != 0)
+            firstContained.add(move1);
+        else if (move2.getPower() == 0 && move2.getPP() != 0)
+            firstContained.add(move2);
+        else if (move3.getPower() == 0 && move3.getPP() != 0)
+            firstContained.add(move3);
+        else if (move4.getPower() == 0 && move4.getPP() != 0)
+            firstContained.add(move4);
+        ArrayList<PokemonMove> secondContained = checkContained(secondMoves);
+        ArrayList<PokemonMove> thirdContained = checkContained(thirdMoves);
+
+        if (percent > 80 && firstContained.size() > 0) {
+            return firstContained.get((int) (firstContained.size() * Math.random()));
+        } else if (percent > 20 && secondContained.size() > 0) {
+            return findMostDamaging(secondContained, playerD, playerT);
+        } else if (thirdContained.size() > 0) {
+            return findMostDamaging(thirdContained, playerD, playerT);
+        } else if (secondContained.size() > 0) {
+            return findMostDamaging(secondContained, playerD, playerT);
+        } else if (firstContained.size() > 0) {
+            return firstContained.get((int) (firstContained.size() * Math.random()));
+        } else {
+            return new PokemonMove("Empty");
+        }
+    }
+
+    private PokemonMove findMostDamaging(ArrayList<PokemonMove> moves, int playerD, int playerT) {
+        int mostDamage = 0;
+        PokemonMove selectedMove = new PokemonMove("Empty");
+
+        for (PokemonMove move: moves) {
+            int damage = move.determineDamage(level, attack, playerD, playerT, 0);
+            if (damage > mostDamage) {
+                mostDamage = damage;
+                selectedMove = move;
+            }
+        }
+        return selectedMove;
+    }
+
+    private ArrayList<PokemonMove> checkContained(List<String> moves) {
+        ArrayList<PokemonMove> containedMoves = new ArrayList<>();
+
+        if (moves.contains(move1.getName()) && move1.getPP() != 0) {
+            containedMoves.add(move1);
+        } else if (moves.contains(move2.getName()) && move2.getPP() != 0) {
+            containedMoves.add(move2);
+        } else if (moves.contains(move3.getName()) && move3.getPP() != 0) {
+            containedMoves.add(move3);
+        } else if (moves.contains(move4.getName()) && move4.getPP() != 0) {
+            containedMoves.add(move4);
+        }
+
+        return containedMoves;
+    }
+
+    public void removePP(PokemonMove move) {
+        if (move.getName().equals(move1.getName())) {
+            move1.consumePP();
+        } else if (move.getName().equals(move2.getName())) {
+            move2.consumePP();
+        } else if (move.getName().equals(move3.getName())) {
+            move3.consumePP();
+        } else if (move.getName().equals(move4.getName())) {
+            move4.consumePP();
+        }
     }
 
     public int getXPReward() {

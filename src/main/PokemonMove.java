@@ -11,6 +11,8 @@ public class PokemonMove {
     private int pp;
     private final int power;
     private int accuracy;
+    private int rawDamage;
+    private int actualDamage;
     private final int NORMAL = 1;
     private final int FIRE = 2;
     private final int WATER = 3;
@@ -112,7 +114,7 @@ public class PokemonMove {
         pp --;
     }
 
-    public int findActualDamage(int typeD, int rawDamage) {
+    private int findActualDamage(int typeD, int rawDamage) {
         String effect = "";
         int actualDamage;
 
@@ -232,10 +234,49 @@ public class PokemonMove {
     // using equation to calculate damage from actual pokemon game !!! does not consider effect from types
     // ((((2*stats[0])/5+2)*power*a)/(50*statsC[2])+2);
     // attack and level from user of move, defence from character being hit.
-    public int calculateRawDamage(int level, int attack, int defence) {
+    private int calculateRawDamage(int level, int attack, int defence) {
         int d1 = ((2 * level) / 5) + 2;
         int d2 = (d1 * power * attack) / defence;
         return (d2 / 50) + 2;
+    }
+
+    public int determineDamage(int attackerLevel, int attackerA, int defenderD, int firstType, int secondType) {
+        // get raw damage and apply effect
+        rawDamage = calculateRawDamage(attackerLevel, attackerA, defenderD);
+        actualDamage = findActualDamage(firstType, rawDamage);
+        if (secondType != 0)
+            actualDamage = findActualDamage(secondType, actualDamage);
+
+        // get random factor in attacks
+        int random = (int) (15 * Math.random() + 85);
+        return (actualDamage * random) / 100;
+    }
+
+    /**
+     * Return the move's last raw damage calculation to caller.
+     *
+     * @return the move's last raw damage calculation.
+     */
+    public int getRawDamage() {
+        return rawDamage;
+    }
+
+    /**
+     * Return the move's last actual damage calculation to caller.
+     *
+     * @return the move's last actual damage calculation.
+     */
+    public int getActualDamage() {
+        return actualDamage;
+    }
+
+    /**
+     * Return the move's power to caller.
+     *
+     * @return the move's power.
+     */
+    public int getPower() {
+        return power;
     }
 
     /**

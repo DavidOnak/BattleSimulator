@@ -33,12 +33,37 @@ public class PlayerStats {
         stats = retrieveStats();
 
         level = stats[0];
-        health = stats[1];
         useBaseStats();
+        health = healthInitial;
         xp = stats[6];
         System.out.println(xp  + " the xp level");
 
         calculateNextLevel(level);
+    }
+
+    public void dealDamage(int damage) {
+        health = health - damage;
+
+        if (health < 0)
+            health = 0;
+    }
+
+    /**
+     * Return the player's type to caller.
+     *
+     * @return the type of the player.
+     */
+    public int getType() {
+        return stats[5];
+    }
+
+    /**
+     * Return the player's defence to caller.
+     *
+     * @return the defence of the player.
+     */
+    public int getDefence() {
+        return defence;
     }
 
     /**
