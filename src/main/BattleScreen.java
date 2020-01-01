@@ -5,7 +5,6 @@ import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -180,9 +179,7 @@ public class BattleScreen extends JFrame {
                     btnReturn.setEnabled(true);
                 }
             } else { // if move hit but did not K.O
-                // TODO: adjust text and health bar
-                // determine if a hit or miss
-
+                pokemonMove();
             }
         }
     }
@@ -191,11 +188,10 @@ public class BattleScreen extends JFrame {
         // AI to get move to attack with
         PokemonMove attackMove = pokemon.chooseMove(player.getDefence(), player.getType());
         pokemon.removePP(attackMove);
-
-        // TODO: do earier text here
+        lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + "!");
 
         // get damage with move
-        int damage = attackMove.determineDamage(player.getLevel(), player.getAttack(), pokemon.getDefence(), pokemon.getFirstType(), pokemon.getSecondType());
+        int damage = attackMove.determineDamage(pokemon.getLevel(), pokemon.getAttack(), player.getDefence(), player.getType(), 0);
         int actualDamage = attackMove.getActualDamage();
         int rawDamage = attackMove.getRawDamage();
 
@@ -205,7 +201,7 @@ public class BattleScreen extends JFrame {
 
             // deal damage
             player.dealDamage(damage);
-            // TODO: drainPokemonHealth(pokemon.getHealth()); also deals with health text
+            drainPlayerHealth(player.getHealth());
 
             // give effect message
             if (actualDamage == 0)
@@ -320,6 +316,32 @@ public class BattleScreen extends JFrame {
     }
 
     /**
+     * Lowers the health of the player while sliding health bar down to target health.
+     *
+     * @param targetHealth the health to go down too.
+     */
+    private void drainPlayerHealth(int targetHealth) {
+        int i = pbPlayerHealth.getValue();
+        System.out.println("Going to " + targetHealth + " for player health");
+        try {
+            while (i > targetHealth) {
+                // delay the thread
+                Thread.sleep(175);
+
+                i --;
+                pbPlayerHealth.paintImmediately(0, 0, 200, 200);
+                pbPlayerHealth.setValue(i);
+                lblPlayerHealth.setText(i + "/" + player.getInitialHealth());
+
+                pbPlayerHealth.setForeground(colourCheck(pbPlayerHealth.getValue()));
+            }
+        }
+        catch (InterruptedException ex) {
+            System.out.println("An Interrupted Exception occurred when trying to stall");
+        }
+    }
+
+    /**
      * Lowers the health of the pokemon while sliding health bar down to target health.
      *
      * @param targetHealth the health to go down too.
@@ -336,7 +358,7 @@ public class BattleScreen extends JFrame {
                 pbCompHealth.setValue(i - 1);
                 i --;
 
-                colourCheck(pbCompHealth.getValue());
+                pbCompHealth.setForeground(colourCheck(pbCompHealth.getValue()));
             }
         }
         catch (InterruptedException ex) {
@@ -367,34 +389,34 @@ public class BattleScreen extends JFrame {
         }
     }
 
-    private void colourCheck (double health) {
+    private Color colourCheck (double health) {
         double initialHealth = pokemon.getInitialHealth();
         double percent = (health / initialHealth) * 100;
-
-        //pbCompHealth.setForeground(new Color(51, 255, 51));
+        Color healthColour = new Color(51, 255, 51);
 
         if (percent <= 90) {
             if (percent > 85)
-                pbCompHealth.setForeground(new Color(86, 255, 47));
+                healthColour = new Color(86, 255, 47);
             else if (percent > 75)
-                pbCompHealth.setForeground(new Color(189, 255, 49));
+                healthColour = new Color(189, 255, 49);
             else if (percent > 65)
-                pbCompHealth.setForeground(new Color(232, 255, 46));
+                healthColour = new Color(232, 255, 46);
             else if (percent > 60)
-                pbCompHealth.setForeground(new Color(255, 241, 41));
+                healthColour = new Color(255, 241, 41);
             else if (percent > 50)
-                pbCompHealth.setForeground(new Color(255, 207, 34));
+                healthColour = new Color(255, 207, 34);
             else if (percent > 40)
-                pbCompHealth.setForeground(new Color(255, 174, 37));
+                healthColour = new Color(255, 174, 37);
             else if (percent > 30)
-                pbCompHealth.setForeground(new Color(255, 135, 41));
+                healthColour = new Color(255, 135, 41);
             else if (percent > 20)
-                pbCompHealth.setForeground(new Color(255, 104, 39));
+                healthColour = new Color(255, 104, 39);
             else if (percent > 10)
-                pbCompHealth.setForeground(new Color(255, 80, 38));
+                healthColour = new Color(255, 80, 38);
             else
-                pbCompHealth.setForeground(new Color(255, 46, 31));
+                healthColour = new Color(255, 46, 31);
         }
+        return healthColour;
     }
 
     /**

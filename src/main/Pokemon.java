@@ -33,8 +33,9 @@ public class Pokemon {
     private final int DARK = 8;
     private final String[] LEGENDARY = {"Mew", "Lugia", "Palkia", "Death Angle"};
     private final String[] REGULAR = {"Charizard", "Pikachu", "Zubat", "Ditto", "Poliwhirl", "Weedle", "Oddish", "Eevee"};
-    private final String[] SECOND = {"Mew", "Lugia", "Palkia", "Death Angle"};
-    private final String[] THIRD = {"Mew", "Lugia", "Palkia", "Death Angle"};
+    private final String[] SECOND = {"Pound", "Double Slap", "Fire Spin", "Ember", "Bubble", "Thunder Shock", "Charge Beam",
+            "Leafage", "Absorb", "Twister", "Astonish", "Judgment", "Shadow Ball", "Night Daze", "V-create", "Parabolic Charge", "Snarl"};
+    private final String[] THIRD = {"Hydro Cannon", "Clanging Scales", "Illuminati"};
 
     // for ai make 3 array lists for thresholds, eg pick random from this when hp is over 80 percent, pick most damaging when over 20 percent,
     // added in these if contain in overage list for that catagory
@@ -221,11 +222,11 @@ public class Pokemon {
         ArrayList<PokemonMove> firstContained = new ArrayList<>();
         if (move1.getPower() == 0 && move1.getPP() != 0)
             firstContained.add(move1);
-        else if (move2.getPower() == 0 && move2.getPP() != 0)
+        if (move2.getPower() == 0 && move2.getPP() != 0)
             firstContained.add(move2);
-        else if (move3.getPower() == 0 && move3.getPP() != 0)
+        if (move3.getPower() == 0 && move3.getPP() != 0)
             firstContained.add(move3);
-        else if (move4.getPower() == 0 && move4.getPP() != 0)
+        if (move4.getPower() == 0 && move4.getPP() != 0)
             firstContained.add(move4);
         ArrayList<PokemonMove> secondContained = checkContained(secondMoves);
         ArrayList<PokemonMove> thirdContained = checkContained(thirdMoves);
@@ -251,6 +252,8 @@ public class Pokemon {
 
         for (PokemonMove move: moves) {
             int damage = move.determineDamage(level, attack, playerD, playerT, 0);
+            if (move.getName().equals("Absorb") || move.getName().equals("Parabolic Charge"))
+                damage = (int) (damage * 1.5);
             if (damage > mostDamage) {
                 mostDamage = damage;
                 selectedMove = move;
@@ -262,15 +265,14 @@ public class Pokemon {
     private ArrayList<PokemonMove> checkContained(List<String> moves) {
         ArrayList<PokemonMove> containedMoves = new ArrayList<>();
 
-        if (moves.contains(move1.getName()) && move1.getPP() != 0) {
+        if (moves.contains(move1.getName()) && move1.getPP() != 0)
             containedMoves.add(move1);
-        } else if (moves.contains(move2.getName()) && move2.getPP() != 0) {
+        if (moves.contains(move2.getName()) && move2.getPP() != 0)
             containedMoves.add(move2);
-        } else if (moves.contains(move3.getName()) && move3.getPP() != 0) {
+        if (moves.contains(move3.getName()) && move3.getPP() != 0)
             containedMoves.add(move3);
-        } else if (moves.contains(move4.getName()) && move4.getPP() != 0) {
+        if (moves.contains(move4.getName()) && move4.getPP() != 0)
             containedMoves.add(move4);
-        }
 
         return containedMoves;
     }

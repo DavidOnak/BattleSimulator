@@ -19,7 +19,6 @@ public class main {
        //new MoveSelection(2);
        //new IntroFrame();
         new BattleScreen(2, 1, 1);
-        //test testy = new test();
        // testy.setVisible(true);
     }
 }
