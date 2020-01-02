@@ -124,7 +124,7 @@ public class PlayerStats {
      * Calculate value for nextLevel.
      */
     public int calculateNextLevel(int level) {
-        return nextLevelXP = (int) (1.7*level) + 15;
+        return nextLevelXP = (int) (2.5*level) + 15;
     }
 
     /**

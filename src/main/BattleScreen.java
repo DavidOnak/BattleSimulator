@@ -161,7 +161,7 @@ public class BattleScreen extends JFrame {
                         addPlayerExperience(player.calculateNextLevel(originalLevel));
                         pbExperience.setValue(0);
                         pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
-                        moveLearned();
+                        moveLearned(originalLevel);
                         lblPlayerLevel.setText("Lv." + player.getLevel());
                     } else {
                         addPlayerExperience(player.getXP());
@@ -222,9 +222,9 @@ public class BattleScreen extends JFrame {
         }
     }
 
-    private void moveLearned() {
+    private void moveLearned(int currentLevel) {
         boolean learned = false;
-        int check = player.getLevel();
+        int check = currentLevel;
 
         // unlock moves up to level 60
         if (check <= 60) {
@@ -233,6 +233,7 @@ public class BattleScreen extends JFrame {
                 check -= 5;
                 if (check == 0) {
                     learned = true;
+                    break;
                 }
             }
         }

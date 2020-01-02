@@ -19,6 +19,7 @@ public class Pokemon {
     private int health;
     private int initialHealth;
     private int[] stats;
+    private final int tier;
     private PokemonMove move1;
     private PokemonMove move2;
     private PokemonMove move3;
@@ -40,6 +41,7 @@ public class Pokemon {
     // for ai make 3 array lists for thresholds, eg pick random from this when hp is over 80 percent, pick most damaging when over 20 percent,
     // added in these if contain in overage list for that catagory
     public Pokemon(int tier) { // animation buggy for Ditto, Poliwhirl, pickachu
+        this.tier = tier;
         switch (tier) {
             case 1: //levels 10 to 25
                 level = (int) (15 * Math.random() + 10);
@@ -290,8 +292,10 @@ public class Pokemon {
     }
 
     public int getXPReward() {
-
-        return 150;
+        int reward = 2 * level * tier;
+        if (name.equals("Charizard"))
+            reward += 15;
+        return reward;
     }
 
     /**
