@@ -33,7 +33,7 @@ public class PlayerStats {
         stats = retrieveStats();
 
         level = stats[0];
-        useBaseStats();
+        useBaseStats(false);
         health = healthInitial;
         xp = stats[6];
         System.out.println(xp  + " the xp level");
@@ -46,6 +46,44 @@ public class PlayerStats {
 
         if (health < 0)
             health = 0;
+    }
+
+    public String changeDefence(int percent, boolean add) {
+        // get amount to add
+        int change = ((percent * defence) / 100);
+
+        if (add) {
+            defence += change;
+            if (percent < 10)
+                return "defence has increased!";
+            else
+                return "defence has sharply increased!";
+        } else {
+            defence -= change;
+            if (percent < 10)
+                return "defence has decreased!";
+            else
+                return "defence has sharply decreased!";
+        }
+    }
+
+    public String changeAttack(int percent, boolean add) {
+        // get amount to add
+        int change = ((percent * attack) / 100);
+
+        if (add) {
+            attack += change;
+            if (percent < 10)
+                return "attack has increased!";
+            else
+                return "attack has sharply increased!";
+        } else {
+            attack -= change;
+            if (percent < 10)
+                return "attack has decreased!";
+            else
+                return "attack has sharply decreased!";
+        }
     }
 
     /**
@@ -138,7 +176,7 @@ public class PlayerStats {
 
         while (newXP >= nextLevelXP) {
             newXP -= nextLevelXP;
-            useBaseStats();
+            useBaseStats(true);
             calculateNextLevel(level);
         }
 
@@ -149,10 +187,14 @@ public class PlayerStats {
     }
 
     /**
-     * Using the base stats of the player, creates stats to use for battle.
+     * Using the base stats of the player, creates stats to use for battle, also levels up player if levelingUp is true.
+     *
+     * @param levelingUp determines weather the player levels up or not.
      */
-    private void useBaseStats() {
-        level++;
+    private void useBaseStats(boolean levelingUp) {
+        if (levelingUp)
+            level++;
+
         stats[0] = level;
 
         healthInitial = (((stats[1] * 2) * level) / 100) + level + 10;

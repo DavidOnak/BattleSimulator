@@ -10,6 +10,7 @@ public class PokemonMove {
     private final int initialPP;
     private int pp;
     private final int power;
+    private int chance = 0; // chance that damaging move does effect
     private int accuracy;
     private int rawDamage;
     private int actualDamage;
@@ -35,37 +36,37 @@ public class PokemonMove {
                 type = NORMAL; pp = 35; power = 40; accuracy = 100;
                 break;
             case "Double Slap":
-                type = NORMAL; pp = 10; power = 15; accuracy = 85; //Hits 2-5 times in one turn.
+                type = NORMAL; pp = 10; power = 15; accuracy = 85; // Hits 2-5 times in one turn.
                 break;
             case "Acupressure":
-                type = NORMAL; pp = 30; power = 0; accuracy = 100; //Sharply raises a random stat.
+                type = NORMAL; pp = 30; power = 0; accuracy = 100; // Sharply raises a random stat.
                 break;
             case "Hold Hands":
-                type = NORMAL; pp = 40; power = 0; accuracy = 100; //Does nothing
+                type = NORMAL; pp = 40; power = 0; accuracy = 100; // Does nothing
                 break;
             case "Fire Spin":
-                type = FIRE; pp = 15; power = 35; accuracy = 85; //Traps opponent, damaging them for 4-5 turns.
+                type = FIRE; pp = 15; power = 35; accuracy = 85; // Traps opponent, damaging them for 4-5 turns.
                 break;
             case "Ember":
                 type = FIRE; pp = 25; power = 40; accuracy = 100;
                 break;
             case "Bubble":
-                type = WATER; pp = 30; power = 40; accuracy = 100; //May lower opponent's Speed. 10%
+                type = WATER; pp = 30; power = 40; accuracy = 100; // May lower opponent's Speed. 10%
                 break;
             case "Withdraw":
-                type = WATER; pp = 40; power = 0; accuracy = 100; //raises user's defence
+                type = WATER; pp = 40; power = 0; accuracy = 100; // raises user's defence
                 break;
             case "Thunder Shock":
-                type = ELECTRIC; pp = 30; power = 40; accuracy = 100; //May paralyze opponent. 10%
+                type = ELECTRIC; pp = 30; power = 40; accuracy = 100; // May paralyze opponent. 10%
                 break;
             case "Charge Beam":
-                type = ELECTRIC; pp = 10; power = 50; accuracy = 90; //May raise user's Special Attack.
+                type = ELECTRIC; pp = 10; power = 50; accuracy = 90; chance = 30; // May raise user's Attack.
                 break;
             case "Leafage":
                 type = GRASS; pp = 40; power = 40; accuracy = 100;
                 break;
             case "Absorb":
-                type = GRASS; pp = 25; power = 20; accuracy = 100; //Recover half the damage dealt.
+                type = GRASS; pp = 25; power = 20; accuracy = 100; // Recover half the damage dealt.
                 break;
             case "Twister":
                 type = DRAGON; pp = 20; power = 40; accuracy = 100;
@@ -77,31 +78,49 @@ public class PokemonMove {
                 type = NORMAL; pp = 10; power = 100; accuracy = 100;
                 break;
             case "Hydro Cannon":
-                type = WATER; pp = 5; power = 150; accuracy = 90; //User must recharge next turn.
+                type = WATER; pp = 5; power = 150; accuracy = 90; // User must recharge next turn.
                 break;
             case "Cotton Guard":
-                type = GRASS; pp = 10; power = 0; accuracy = 100; //Sharply increases users defence
+                type = GRASS; pp = 10; power = 0; accuracy = 100; // Sharply increases users defence
                 break;
             case "Shadow Ball":
-                type = GHOST; pp = 15; power = 80; accuracy = 100; //may lowers opponents defence %20
+                type = GHOST; pp = 15; power = 80; accuracy = 100; chance = 20; // may lowers opponents defence
                 break;
             case "Night Daze":
-                type = DARK; pp = 5; power = 150; accuracy = 90; //may lower opponents acurracy 40% chance
+                type = DARK; pp = 5; power = 150; accuracy = 90; chance = 40; // may lower opponents acurracy
                 break;
             case "V-create":
-                type = FIRE; pp = 15; power = 80; accuracy = 100; //may lowers opponents defence %20
+                type = FIRE; pp = 15; power = 80; accuracy = 100; chance = 20; // may lowers opponents defence
                 break;
             case "Parabolic Charge":
-                type = ELECTRIC; pp = 20; power = 65; accuracy = 100; //User recovers half the HP inflicted on opponent.
+                type = ELECTRIC; pp = 20; power = 65; accuracy = 100; // User recovers half the HP inflicted on opponent.
                 break;
             case "Clanging Scales":
-                type = DRAGON; pp = 5; power = 110; accuracy = 100; //slightly lowers user's defence
+                type = DRAGON; pp = 5; power = 110; accuracy = 100; chance = 100; // slightly lowers user's defence
                 break;
             case "Snarl":
-                type = DARK; pp = 10; power = 85; accuracy = 95; //lowers opponents attack
+                type = DARK; pp = 10; power = 85; accuracy = 95; chance = 100; // lowers opponents attack
                 break;
             case "Illuminati":
-                type = DARK; pp = 1; power = 200; accuracy = 100; //the user looses half of their health
+                type = DARK; pp = 1; power = 200; accuracy = 100; // the user looses half of their health
+                break;
+            case "Char": // onwards are hidden moves
+                type = FIRE; pp = 15; power = 60; accuracy = 85;
+                break;
+            case "Zap":
+                type = ELECTRIC; pp = 15; power = 60; accuracy = 85;
+                break;
+            case "Bite":
+                type = DARK; pp = 35; power = 40; accuracy = 100;
+                break;
+            case "Clamp":
+                type = DARK; pp = 10; power = 40; accuracy = 100; // recover half of damage done
+                break;
+            case "Quad Blast":
+                type = WATER; pp = 8; power = 40; accuracy = 80; // attacks 4 times
+                break;
+            case "Dark Wave":
+                type = DARK; pp = 5; power = 0; accuracy = 0; // raises attack and defense
                 break;
             default:
                 type = NORMAL; pp = 100; power = 5; accuracy = 90;
@@ -110,10 +129,21 @@ public class PokemonMove {
         initialPP = pp;
     }
 
+    /**
+     * Reduces the pp in this move by 1.
+     */
     public void consumePP() {
         pp --;
     }
 
+    /**
+     * Calculates the actual damage inflicted by the move by taking the type of the move and of the defender into
+     * effect by applying a multiplier based on effectiveness.
+     *
+     * @param typeD the type of the defender.
+     * @param rawDamage the raw damage of the attack.
+     * @return the actual damage inflicted from the attack.
+     */
     private int findActualDamage(int typeD, int rawDamage) {
         String effect = "";
         int actualDamage;
@@ -231,16 +261,35 @@ public class PokemonMove {
         return actualDamage;
     }
 
-    // using equation to calculate damage from actual pokemon game !!! does not consider effect from types
-    // ((((2*stats[0])/5+2)*power*a)/(50*statsC[2])+2);
-    // attack and level from user of move, defence from character being hit.
+    /**
+     * Uses the equation from the actual Pokemon games to calculate raw damage, does not take effects and factors
+     * into effect such as multipliers from types.
+     *
+     * @param level the level of the attacker.
+     * @param attack the attack stat of the attacker.
+     * @param defence the defence stat of the defender.
+     * @return the raw damage inflicted from the attack.
+     */
     private int calculateRawDamage(int level, int attack, int defence) {
         int d1 = ((2 * level) / 5) + 2;
         int d2 = (d1 * power * attack) / defence;
         return (d2 / 50) + 2;
     }
 
+    /**
+     * Return the damage that the move will inflict based on given stats of the attacker and defender.
+     *
+     * @param attackerLevel the level of the attacker.
+     * @param attackerA the attack stat of the attacker.
+     * @param defenderD the defence stat of the defender.
+     * @param firstType the primary type of the defender.
+     * @param secondType the secondary type of the defender.
+     * @return the damage that will be inflicted, returns 0 if the move has 0 power.
+     */
     public int determineDamage(int attackerLevel, int attackerA, int defenderD, int firstType, int secondType) {
+        if (power == 0)
+            return power;
+
         // get raw damage and apply effect
         rawDamage = calculateRawDamage(attackerLevel, attackerA, defenderD);
         actualDamage = findActualDamage(firstType, rawDamage);
@@ -277,6 +326,15 @@ public class PokemonMove {
      */
     public int getPower() {
         return power;
+    }
+
+    /**
+     * Return the move's chance to caller.
+     *
+     * @return the move's chance.
+     */
+    public int getChance() {
+        return chance;
     }
 
     /**

@@ -3,8 +3,6 @@ package main;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -76,7 +74,7 @@ public class NewSave extends JFrame {
      * @param name the name associated with new save.
      * @param gender the gender associated with new save.
      */
-    public void makeFile(String name, String gender) {
+    private void makeFile(String name, String gender) {
         if (saveSlot == 1) { // for slot 1
             System.out.println("This is save 1");
             try { // create save file

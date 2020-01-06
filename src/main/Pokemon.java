@@ -291,6 +291,44 @@ public class Pokemon {
         }
     }
 
+    public String changeDefence(int percent, boolean add) {
+        // get amount to add
+        int change = ((percent * defence) / 100);
+
+        if (add) {
+            defence += change;
+            if (percent < 10)
+                return "defence has increased!";
+            else
+                return "defence has sharply increased!";
+        } else {
+            defence -= change;
+            if (percent < 10)
+                return "defence has decreased!";
+            else
+                return "defence has sharply decreased!";
+        }
+    }
+
+    public String changeAttack(int percent, boolean add) {
+        // get amount to add
+        int change = ((percent * attack) / 100);
+
+        if (add) {
+            attack += change;
+            if (percent < 10)
+                return "attack has increased!";
+            else
+                return "attack has sharply increased!";
+        } else {
+            attack -= change;
+            if (percent < 10)
+                return "attack has decreased!";
+            else
+                return "attack has sharply decreased!";
+        }
+    }
+
     public int getXPReward() {
         int reward = 2 * level * tier;
         if (name.equals("Charizard"))

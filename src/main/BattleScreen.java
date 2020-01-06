@@ -127,6 +127,8 @@ public class BattleScreen extends JFrame {
      * @param move the PokemonMove to attack with.
      */
     private void playerAttack(PokemonMove move) {
+        lblPokemonText2.setText("");
+        lblPlayerText2.setText("");
         lblPlayerText.setText("You used " + move.getName() + "!");
 
         // get potential damage from move
@@ -149,6 +151,14 @@ public class BattleScreen extends JFrame {
                 lblPlayerText.setText("You used " + move.getName() + ", it is super effective!");
             else if (rawDamage > actualDamage)
                 lblPlayerText.setText("You used " + move.getName() + ", it is not very effective!");
+
+            // add text on effect on the character
+            String text = applyMoveEffect(move, 1);
+            if (!text.equals(""))
+                if (move.getPower() == 0 || move.getName().equals("Charge Beam"))
+                    lblPlayerText2.setText(text);
+                else
+                    lblPokemonText2.setText(text);
 
             if (pokemon.getHealth() == 0) {
                 lblPokemonText2.setText(pokemon.getName() + " has fainted!");
@@ -217,8 +227,93 @@ public class BattleScreen extends JFrame {
 
                 btnReturn.setEnabled(true);
             }
+
+            // apply text on character as effect
+            String text = applyMoveEffect(attackMove, 2);
+            if (!text.equals(""))
+                if (attackMove.getPower() == 0 || attackMove.getName().equals("Charge Beam"))
+                    lblPokemonText2.setText(text);
+                else
+                    lblPlayerText2.setText(text);
+
         } else { // if move misses
             lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", but it missed!");
+        }
+    }
+
+    private String applyMoveEffect(PokemonMove move, int character) {
+        String text = "";
+        final int SMALL = 6;
+        final int LARGE = 10;
+
+        // determine if damaging move will have effect
+        boolean effect = false;
+        Random rand = new Random();
+        if (rand.nextInt(100) <= move.getChance())
+            effect = true;
+
+        switch (move.getName()) {
+            case "Acupressure":
+                if ((int) (2 * Math.random()+1) == 1)
+                    text = changeAttack(SMALL, character, true);
+                else
+                    text = changeDefence(SMALL, character, true);
+                break;
+            case "Withdraw":
+                text = changeDefence(SMALL, character, true);
+                break;
+            case "Charge Beam":
+                if (effect)
+                    text = changeAttack(SMALL, character, true);
+                break;
+            case "Cotton Guard":
+                text = changeDefence(LARGE, character, true);
+                break;
+            case "Shadow Ball":
+            case "V-create":
+            case "Clanging Scales":
+                if (effect)
+                    if (character == 1)
+                        text = changeDefence(SMALL, 2, false);
+                    else
+                        text = changeDefence(SMALL, 1, false);
+                break;
+            case "Night Daze":
+                if (effect) // TODO: make this possible in pokemon/player classes
+                    //if (character == 1)
+                        //text = changeAccuracy(SMALL, 2, false);
+                    //else
+                        //text = changeAccuracy(SMALL, 1, false);
+                break;
+            case "Snarl":
+                if (effect)
+                    if (character == 1)
+                        text = changeAttack(SMALL, 2, false);
+                    else
+                        text = changeAttack(SMALL, 1, false);
+                break;
+            case "Dark Wave":
+                changeAttack(SMALL, character, true);
+                changeDefence(SMALL, character, true);
+                text = "attack and defence has rose!";
+        }
+
+        return text;
+    }
+
+    private String changeDefence(int percent, int character, boolean add) {
+        if (character == 1) {
+            return player.changeDefence(percent, add);
+        } else {
+            return pokemon.changeDefence(percent, add);
+        }
+    }
+
+    private String changeAttack(int percent, int character, boolean add) {
+        if (character == 1) {
+            return player.changeAttack(percent, add);
+        } else {
+            return pokemon.changeAttack(percent, add);
         }
     }
 
