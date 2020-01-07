@@ -38,8 +38,11 @@ public class Pokemon {
             "Leafage", "Absorb", "Twister", "Astonish", "Judgment", "Shadow Ball", "Night Daze", "V-create", "Parabolic Charge", "Snarl"};
     private final String[] THIRD = {"Hydro Cannon", "Clanging Scales", "Illuminati"};
 
-    // for ai make 3 array lists for thresholds, eg pick random from this when hp is over 80 percent, pick most damaging when over 20 percent,
-    // added in these if contain in overage list for that catagory
+    /**
+     * Constructor that creates an instance of a Pokemon.
+     *
+     * @param tier the tier to generate a Pokemon in.
+     */
     public Pokemon(int tier) { // animation buggy for Ditto, Poliwhirl, pickachu
         this.tier = tier;
         switch (tier) {
@@ -74,6 +77,11 @@ public class Pokemon {
         generatePokemon(tier);
     }
 
+    /**
+     * Using the inputted tier, creates a Pokemon and generates it stats.
+     *
+     * @param tier the tier to generate a Pokemon in.
+     */
     private void generatePokemon(int tier) {
         switch (name) {
             case "Charizard":
@@ -197,6 +205,16 @@ public class Pokemon {
         System.out.println(name + " has the moves "+ move1.getName() +", " + move2.getName() + ", " + move3.getName() + ", " + move4.getName());
     }
 
+    /**
+     * Generates stats for this Pokemon using the Pokemon's level and inputted base stats.
+     *
+     * @param hp the base stat for health.
+     * @param attack the base stat for attack.
+     * @param defence the base stat for defence.
+     * @param speed the base stat for speed.
+     * @param firstType the first type of this Pokemon.
+     * @param secondType the second type of this Pokemon.
+     */
     private void generateStats(int hp, int attack, int defence, int speed, int firstType, int secondType) {
         type1 = firstType;
         type2 = secondType;
@@ -208,6 +226,11 @@ public class Pokemon {
         System.out.println("Health " + health + ", attack " + this.attack + ", defence " + this.defence + ", speed " + this.speed);
     }
 
+    /**
+     * Decreases health by the input damage, until reaching 0 and then stays at 0.
+     *
+     * @param damage the damage to be done onto this Pokemon.
+     */
     public void dealDamage(int damage) {
         health = health - damage;
 
@@ -215,6 +238,13 @@ public class Pokemon {
             health = 0;
     }
 
+    /**
+     * Returns the best PokemonMove to use based on given defence and type of target.
+     *
+     * @param playerD the defence of the target.
+     * @param playerT the type of the target.
+     * @return the best PokemonMove to use on the target.
+     */
     public PokemonMove chooseMove(int playerD, int playerT) {
         List<String> secondMoves = Arrays.asList(SECOND);
         List<String> thirdMoves = Arrays.asList(THIRD);
@@ -248,6 +278,15 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Returns the most damaging PokemonMove to use based on given defence and type of target in an Array of given
+     * PokemonMoves.
+     *
+     * @param moves the Array of PokemonMoves to evaluate.
+     * @param playerD the defence of the target.
+     * @param playerT the type of the target.
+     * @return the most damaging PokemonMove to use on the target.
+     */
     private PokemonMove findMostDamaging(ArrayList<PokemonMove> moves, int playerD, int playerT) {
         int mostDamage = 0;
         PokemonMove selectedMove = new PokemonMove("Empty");
@@ -264,6 +303,13 @@ public class Pokemon {
         return selectedMove;
     }
 
+    /**
+     * Returns an ArrayList of all the instances of PokemonMoves this Pokemon has that has its name contained
+     * in the given list.
+     *
+     * @param moves the list of PokemonMove names to evaluate.
+     * @return the ArrayList containing all of this Pokemon's PokemonMoves with its name contained in moves.
+     */
     private ArrayList<PokemonMove> checkContained(List<String> moves) {
         ArrayList<PokemonMove> containedMoves = new ArrayList<>();
 
@@ -279,18 +325,30 @@ public class Pokemon {
         return containedMoves;
     }
 
-    public void removePP(PokemonMove move) {
-        if (move.getName().equals(move1.getName())) {
+    /**
+     * Lower PP for the PokemonMove that this Pokemon has with the given PokemonMove name.
+     *
+     * @param move the name of the PokemonMove to lower PP from.
+     */
+    public void removePP(String move) {
+        if (move.equals(move1.getName())) {
             move1.consumePP();
-        } else if (move.getName().equals(move2.getName())) {
+        } else if (move.equals(move2.getName())) {
             move2.consumePP();
-        } else if (move.getName().equals(move3.getName())) {
+        } else if (move.equals(move3.getName())) {
             move3.consumePP();
-        } else if (move.getName().equals(move4.getName())) {
+        } else if (move.equals(move4.getName())) {
             move4.consumePP();
         }
     }
 
+    /**
+     * Changes the defence by a given percent.
+     *
+     * @param percent the percent to change the defence by.
+     * @param add true if to increase the defence and decrease defence if false.
+     * @return the text to add on display on how much defence was effected.
+     */
     public String changeDefence(int percent, boolean add) {
         // get amount to add
         int change = ((percent * defence) / 100);
@@ -310,6 +368,13 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Changes the attack by a given percent.
+     *
+     * @param percent the percent to change the attack by.
+     * @param add true if to increase the attack and decrease attack if false.
+     * @return the text to add on display on how much attack was effected.
+     */
     public String changeAttack(int percent, boolean add) {
         // get amount to add
         int change = ((percent * attack) / 100);
@@ -329,6 +394,11 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Return the XP to be gained for defeating this Pokemon.
+     *
+     * @return the XP reward for defeating this Pokemon.
+     */
     public int getXPReward() {
         int reward = 2 * level * tier;
         if (name.equals("Charizard"))

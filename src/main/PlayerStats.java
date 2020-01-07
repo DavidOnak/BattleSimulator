@@ -41,6 +41,11 @@ public class PlayerStats {
         calculateNextLevel(level);
     }
 
+    /**
+     * Decreases health by the input damage, until reaching 0 and then stays at 0.
+     *
+     * @param damage the damage to be done onto the player.
+     */
     public void dealDamage(int damage) {
         health = health - damage;
 
@@ -48,6 +53,13 @@ public class PlayerStats {
             health = 0;
     }
 
+    /**
+     * Changes the defence by a given percent.
+     *
+     * @param percent the percent to change the defence by.
+     * @param add true if to increase the defence and decrease defence if false.
+     * @return the text to add on display on how much defence was effected.
+     */
     public String changeDefence(int percent, boolean add) {
         // get amount to add
         int change = ((percent * defence) / 100);
@@ -67,6 +79,13 @@ public class PlayerStats {
         }
     }
 
+    /**
+     * Changes the attack by a given percent.
+     *
+     * @param percent the percent to change the attack by.
+     * @param add true if to increase the attack and decrease attack if false.
+     * @return the text to add on display on how much attack was effected.
+     */
     public String changeAttack(int percent, boolean add) {
         // get amount to add
         int change = ((percent * attack) / 100);

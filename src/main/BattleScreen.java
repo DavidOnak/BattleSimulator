@@ -194,10 +194,13 @@ public class BattleScreen extends JFrame {
         }
     }
 
+    /**
+     * Performs attack of the Pokemon onto the player. The Pokemon chooses which move to use.
+     */
     private void pokemonMove() {
         // AI to get move to attack with
         PokemonMove attackMove = pokemon.chooseMove(player.getDefence(), player.getType());
-        pokemon.removePP(attackMove);
+        pokemon.removePP(attackMove.getName());
         lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + "!");
 
         // get damage with move
@@ -241,6 +244,13 @@ public class BattleScreen extends JFrame {
         }
     }
 
+    /**
+     * Applies the effect of a move onto a characters stats and returns text to add on display on what was effected.
+     *
+     * @param move the PokemonMove that was used.
+     * @param character the character that used the PokemonMove.
+     * @return the text to add on display on what was effected.
+     */
     private String applyMoveEffect(PokemonMove move, int character) {
         String text = "";
         final int SMALL = 6;
@@ -301,6 +311,14 @@ public class BattleScreen extends JFrame {
         return text;
     }
 
+    /**
+     * Changes the defence of the character by the given percent.
+     *
+     * @param percent the percent to change the defence by.
+     * @param character the character is having its defence changed. (1 for player, otherwise Pokemon)
+     * @param add true if to increase the defence and decrease defence if false.
+     * @return the text to add on display on what was effected.
+     */
     private String changeDefence(int percent, int character, boolean add) {
         if (character == 1) {
             return player.changeDefence(percent, add);
@@ -309,6 +327,14 @@ public class BattleScreen extends JFrame {
         }
     }
 
+    /**
+     * Changes the attack of the character by the given percent.
+     *
+     * @param percent the percent to change the attack by.
+     * @param character the character is having its attack changed. (1 for player, otherwise Pokemon)
+     * @param add true if to increase the attack and decrease attack if false.
+     * @return the text to add on display on what was effected.
+     */
     private String changeAttack(int percent, int character, boolean add) {
         if (character == 1) {
             return player.changeAttack(percent, add);
@@ -317,19 +343,21 @@ public class BattleScreen extends JFrame {
         }
     }
 
+    /**
+     * Unlocks a new move for the player if the input level is a multiple of 5 and there is a new move to unlock.
+     *
+     * @param currentLevel the level evaluate.
+     */
     private void moveLearned(int currentLevel) {
         boolean learned = false;
         int check = currentLevel;
 
-        // unlock moves up to level 60
-        if (check <= 60) {
-            // check if multiple of 5
-            while (check > 0) {
-                check -= 5;
-                if (check == 0) {
-                    learned = true;
-                    break;
-                }
+        // check if multiple of 5
+        while (check > 0) {
+            check -= 5;
+            if (check == 0) {
+                learned = true;
+                break;
             }
         }
 
@@ -381,6 +409,12 @@ public class BattleScreen extends JFrame {
         }
     }
 
+    /**
+     * Returns an ArrayList of all the unlocked PokemonMoves in the given file name.
+     *
+     * @param file the file name to read from.
+     * @return an ArrayList of all the names of unlocked PokemonMoves.
+     */
     private ArrayList<String> retrieveUnlocks(String file) {
         ArrayList<String> unlocks = new ArrayList<>();
 
@@ -399,6 +433,13 @@ public class BattleScreen extends JFrame {
         return unlocks;
     }
 
+    /**
+     * Stores the name of all unlocked moves in the given ArrayList and writes them onto a file with a given
+     * file name.
+     *
+     * @param file the file name to store to.
+     * @param unlocks the ArrayList of move names to store.
+     */
     private void storeUnlocks(String file, ArrayList<String> unlocks) {
         try (FileWriter fw = new FileWriter(file, false);
              BufferedWriter bw = new BufferedWriter(fw);
@@ -485,6 +526,11 @@ public class BattleScreen extends JFrame {
         }
     }
 
+    /**
+     * Returns a Color that corresponds to the colour for a specific percentage of health left.
+     *
+     * @param health the health value to evaluate.
+     */
     private Color colourCheck (double health) {
         double initialHealth = pokemon.getInitialHealth();
         double percent = (health / initialHealth) * 100;
@@ -642,7 +688,11 @@ public class BattleScreen extends JFrame {
         return image;
     }
 
-    //make method to get random file dir for batlle field, and for getting colours
+    /**
+     * Creates a JFrame for BattleScreen with GUI, sets background image, labels for characters,
+     * labels for information on the characters, text to tell user what is going on, and buttons for
+     * selecting moves, choosing next pokemon, or returning to main menu.
+     */
     private void makeFrame() {
         battleScreen = new JFrame();
         battleScreen.setSize(1350, 720);
