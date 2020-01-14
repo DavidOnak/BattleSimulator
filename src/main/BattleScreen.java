@@ -59,7 +59,6 @@ public class BattleScreen extends JFrame {
         numOfOpp = numOpp;
         this.tier = tier;
         player = new PlayerStats(saveSlot);
-        pokemon = new Pokemon(tier);
 
         // get player moves
         getMoves();
@@ -112,8 +111,8 @@ public class BattleScreen extends JFrame {
             playerAttack(playerMove4);
         });
         btnNext.addActionListener(e -> {
-            pokemon = new Pokemon(tier);
-            makeFrame();
+            pokemonGeneration();
+            btnNext.setEnabled(false);
         });
         btnReturn.addActionListener(e -> {
             new MainMenu(saveSlot);
@@ -130,6 +129,8 @@ public class BattleScreen extends JFrame {
         lblPokemonText2.setText("");
         lblPlayerText2.setText("");
         lblPlayerText.setText("You used " + move.getName() + "!");
+
+        super.update(lblPlayerText.getGraphics());
 
         // get potential damage from move
         int damage = move.determineDamage(player.getLevel(), player.getAttack(), pokemon.getDefence(), pokemon.getFirstType(), pokemon.getSecondType());
@@ -166,17 +167,21 @@ public class BattleScreen extends JFrame {
                 player.addXP(pokemon.getXPReward());
                 lblPokemon.setIcon(null);
 
-                while (originalLevel <= player.getLevel()) {
-                    if (originalLevel < player.getLevel()) {
-                        addPlayerExperience(player.calculateNextLevel(originalLevel));
-                        pbExperience.setValue(0);
-                        pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
+                if (originalLevel != player.getLevel()) {
+                    for (int i = originalLevel + 1; i <= player.getLevel(); i++) {
                         moveLearned(originalLevel);
-                        lblPlayerLevel.setText("Lv." + player.getLevel());
-                    } else {
-                        addPlayerExperience(player.getXP());
+
+                        if (originalLevel < player.getLevel()) {
+                            addPlayerExperience(player.calculateNextLevel(i));
+                            pbExperience.setValue(0);
+                            pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
+                            lblPlayerLevel.setText("Lv." + player.getLevel());
+                        } else {
+                            addPlayerExperience(player.getXP());
+                        }
                     }
-                    originalLevel++;
+                } else {
+                    addPlayerExperience(player.getXP());
                 }
 
                 lblPlayerHealth.setText(player.getHealth() + "/" + player.getInitialHealth());
@@ -355,6 +360,7 @@ public class BattleScreen extends JFrame {
         // check if multiple of 5
         while (check > 0) {
             check -= 5;
+            System.out.println(check);
             if (check == 0) {
                 learned = true;
                 break;
@@ -388,6 +394,8 @@ public class BattleScreen extends JFrame {
                 unlocks.add(extraMoves[u]);
                 unlocked = extraMoves[u];
 
+                System.out.println("learned "+ unlocked);
+
             } else if (unlocks.size() == 9) {
                 unlocked = extraMoves[9];
             }
@@ -407,6 +415,7 @@ public class BattleScreen extends JFrame {
             if (!unlocked.equals(""))
                 lblPlayerText2.setText("You unlocked " + unlocked);
         }
+        System.out.println("no new move learned!");
     }
 
     /**
@@ -689,6 +698,34 @@ public class BattleScreen extends JFrame {
     }
 
     /**
+     * Generates a pokemon for the player to battle, all information of the pokemon and an image of it is displayed
+     * on the battle screen.
+     */
+    private void pokemonGeneration() {
+        pokemon = new Pokemon(tier);
+
+        lblPokeName.setText(pokemon.getName());
+        if (pokemon.getLevel() == 115)
+            lblPokeLevel.setText("Lv.X");
+        else
+            lblPokeLevel.setText("Lv."+pokemon.getLevel());
+
+        pbCompHealth.setForeground(new Color(51, 255, 51));
+        pbCompHealth.setMaximum(pokemon.getInitialHealth());
+        pbCompHealth.setValue(pokemon.getHealth());
+
+        if (pokemon.getName().equals("Death Angle"))
+            lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".png"));
+        else
+            lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".gif"));
+
+        lblPlayerText.setText("A wild "+pokemon.getName()+" appeared! What do you use?");
+
+        lblPokemonText.setText("");
+        lblPokemonText2.setText("");
+    }
+
+    /**
      * Creates a JFrame for BattleScreen with GUI, sets background image, labels for characters,
      * labels for information on the characters, text to tell user what is going on, and buttons for
      * selecting moves, choosing next pokemon, or returning to main menu.
@@ -753,23 +790,18 @@ public class BattleScreen extends JFrame {
         lblPlayerLevel.setBounds(1170, 360, 60, 30);
         lblPlayerHealth = new JLabel(player.getHealth()+"/"+player.getInitialHealth());
         lblPlayerHealth.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPlayerHealth.setBounds(1070, 410, 44, 30);
-        lblPokeName = new JLabel(pokemon.getName());
+        Dimension sizePH = new Dimension(lblPlayerHealth.getPreferredSize());
+        lblPlayerHealth.setBounds(1070, 410, sizePH.width + 3, sizePH.height);
+        lblPokeName = new JLabel();
         lblPokeName.setFont(new Font("Tahoma", Font.BOLD, 18));
         lblPokeName.setBounds(330, 50, 160, 30);
-        if (pokemon.getLevel() == 115)
-            lblPokeLevel = new JLabel("Lv.X");
-        else
-            lblPokeLevel = new JLabel("Lv."+pokemon.getLevel());
+        lblPokeLevel = new JLabel();
         lblPokeLevel.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPokeLevel.setBounds(530, 50, 60, 30);
 
         // add progress bars to player and computer info panels
         pbCompHealth = new JProgressBar();
-        pbCompHealth.setForeground(new Color(51, 255, 51));
         pbCompHealth.setBounds(390, 100, 146, 14);
-        pbCompHealth.setMaximum(pokemon.getInitialHealth());
-        pbCompHealth.setValue(pokemon.getHealth());
         pbExperience = new JProgressBar();
         pbExperience.setForeground(new Color(0, 153, 204));
         pbExperience.setBounds(960, 440, 260, 10);
@@ -788,17 +820,13 @@ public class BattleScreen extends JFrame {
 
         // add characters to battle field
         lblPokemon = new JLabel();
-        if (pokemon.getName().equals("Death Angle"))
-            lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".png"));
-        else
-            lblPokemon.setIcon(new ImageIcon("images/pokemon/"+pokemon.getName()+".gif"));
         lblPokemon.setBounds(830, 20, 370, 290);
         lblPlayer = new JLabel();
         lblPlayer.setIcon(new ImageIcon("images/pokemon/Player"+gender+".png"));
         lblPlayer.setBounds(190, 220, 350, 250);
 
         // add text on player
-        lblPlayerText = new JLabel("A wild "+pokemon.getName()+" appeared! What do you use?");
+        lblPlayerText = new JLabel();
         lblPlayerText.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPlayerText.setBounds(10, 480, 350, 120);
         lblPlayerText2 = new JLabel();
@@ -812,6 +840,9 @@ public class BattleScreen extends JFrame {
         lblPokemonText2 = new JLabel();
         lblPokemonText2.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblPokemonText2.setBounds(360, 590, 280, 120);
+
+        // generate pokemon to battle
+        pokemonGeneration();
 
         //add components to panel
         panel.add(btnNext);

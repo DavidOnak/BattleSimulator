@@ -90,5 +90,7 @@ public class Database extends JFrame{
         panel.add(btnMainMenu);
 
         database.add(panel);
+
+        JOptionPane.showMessageDialog(null, "This page is still being created! Please try again another time.");
     }
 }

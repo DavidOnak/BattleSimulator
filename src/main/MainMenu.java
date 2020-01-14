@@ -203,7 +203,7 @@ public class MainMenu extends JFrame {
         lblMenu.setFont(new Font("Tahoma", Font.BOLD, 30));
         lblMenu.setForeground(new Color(0, 150, 225));
         Dimension sizeMenu = lblMenu.getPreferredSize();
-        lblMenu.setBounds(120, 50, sizeMenu.width, sizeMenu.height);
+        lblMenu.setBounds(120, 50, sizeMenu.width + 5, sizeMenu.height);
 
         // make text "lblTitle"
         lblTitle = new JLabel();

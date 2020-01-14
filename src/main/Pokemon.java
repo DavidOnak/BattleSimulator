@@ -3,7 +3,7 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+//TODO: Modify xp reward based on number of pokemon being battled at once (20%)
 /**
  *
  * @author David Onak

@@ -161,10 +161,10 @@ public class NewSave extends JFrame {
                  BufferedWriter bw = new BufferedWriter(fw);
                  PrintWriter out = new PrintWriter(bw)) {
                 out.println(20); // level
-                out.println(80); // hp
-                out.println(70); // attack
-                out.println(80); // defence
-                out.println(85); // speed
+                out.println(65); // hp
+                out.println(60); // attack
+                out.println(60); // defence
+                out.println(70); // speed
                 out.println(1); // type
                 out.println(0); // xp
             } catch (IOException ex) {
