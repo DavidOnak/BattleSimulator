@@ -16,9 +16,8 @@ public class main {
     public static void main(String[] args) {
 
         //open new frame
-       new MoveSelection(1);
+       //new MoveSelection(1);
        //new IntroFrame();
-       // new BattleScreen(2, 1, 1);
-       // testy.setVisible(true);
+        new BattleScreen(2, 1, 1);
     }
 }

@@ -21,8 +21,10 @@ public class BattleScreen extends JFrame {
     private JLabel lblBattleField;
     private JLabel lblPlayerText;
     private JLabel lblPlayerText2;
+    private JLabel lblPlayerText3;
     private JLabel lblPokemonText;
     private JLabel lblPokemonText2;
+    private JLabel lblPokemonText3;
     private JLabel lblPlayerInfo;
     private JLabel lblCompInfo;
     private JLabel lblPlayer;
@@ -128,25 +130,39 @@ public class BattleScreen extends JFrame {
     private void playerAttack(PokemonMove move) {
         lblPokemonText2.setText("");
         lblPlayerText2.setText("");
+        lblPokemonText3.setText("");
+        lblPlayerText3.setText("");
         lblPlayerText.setText("You used " + move.getName() + "!");
 
         super.update(lblPlayerText.getGraphics());
 
-        // get potential damage from move
-        int damage = move.determineDamage(player.getLevel(), player.getAttack(), pokemon.getDefence(), pokemon.getFirstType(), pokemon.getSecondType());
-        int actualDamage = move.getActualDamage();
-        int rawDamage = move.getRawDamage();
+        boolean moveHit = false;
+        int attacks = findNumOfAttacks(move.getName());
+        int damage, actualDamage, rawDamage;
 
-        // determine if a hit or miss
-        Random rand = new Random();
-        if (rand.nextInt(100) <= move.getAccuracy()) {
+        int a = attacks;
+        do {
+            // get potential damage from move
+            damage = move.determineDamage(player.getLevel(), player.getAttack(), pokemon.getDefence(), pokemon.getFirstType(), pokemon.getSecondType());
+            actualDamage = move.getActualDamage();
+            rawDamage = move.getRawDamage();
 
-            // deal damage
-            pokemon.dealDamage(damage);
-            drainPokemonHealth(pokemon.getHealth());
+            // determine if a hit or miss
+            Random rand = new Random();
+            if (rand.nextInt(100) <= move.getAccuracy()) {
+                // deal damage
+                pokemon.dealDamage(damage);
+                drainPokemonHealth(pokemon.getHealth());
+                moveHit = true;
+            }
 
-            // give effect message
-            if (actualDamage == 0)
+            a--;
+        } while (a > 0 && pokemon.getHealth() > 0);
+
+        // only run following code if there was a hit
+        if (moveHit) {
+            // add message on move result
+            if (actualDamage == 0 && move.getPower() != 0)
                 lblPlayerText.setText("You used " + move.getName() + ", it has no effect!");
             else if (actualDamage > rawDamage)
                 lblPlayerText.setText("You used " + move.getName() + ", it is super effective!");
@@ -159,44 +175,77 @@ public class BattleScreen extends JFrame {
                 if (move.getPower() == 0 || move.getName().equals("Charge Beam"))
                     lblPlayerText2.setText(text);
                 else
-                    lblPokemonText2.setText(text);
+                    lblPokemonText3.setText(text);
 
-            if (pokemon.getHealth() == 0) {
-                lblPokemonText2.setText(pokemon.getName() + " has fainted!");
-                int originalLevel = player.getLevel();
-                player.addXP(pokemon.getXPReward());
-                lblPokemon.setIcon(null);
+            // add text for multi hit
+            if (attacks > 1)
+                lblPlayerText2.setText("Your move hit "+attacks+" times!");
 
-                if (originalLevel != player.getLevel()) {
-                    for (int i = originalLevel + 1; i <= player.getLevel(); i++) {
-                        moveLearned(originalLevel);
-
-                        if (originalLevel < player.getLevel()) {
-                            addPlayerExperience(player.calculateNextLevel(i));
-                            pbExperience.setValue(0);
-                            pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
-                            lblPlayerLevel.setText("Lv." + player.getLevel());
-                        } else {
-                            addPlayerExperience(player.getXP());
-                        }
-                    }
-                } else {
-                    addPlayerExperience(player.getXP());
-                }
-
-                lblPlayerHealth.setText(player.getHealth() + "/" + player.getInitialHealth());
-                // lblPlayerHealth.setText(); rise up the heath info and adjust the bar too
-                numOfOpp--;
-
-                if (numOfOpp > 0) {
-                    btnNext.setEnabled(true);
-                } else {
-                    btnReturn.setEnabled(true);
-                }
-            } else { // if move hit but did not K.O
-                pokemonMove();
-            }
+        } else {
+            lblPlayerText.setText("You used " + move.getName() + ", but it missed");
         }
+
+        // gain xp and level up if Pokemon fainted
+        if (pokemon.getHealth() == 0) {
+            lblPokemonText2.setText(pokemon.getName() + " has fainted!");
+            int originalLevel = player.getLevel();
+            player.addXP(pokemon.getXPReward());
+            lblPokemon.setIcon(null);
+
+            // if level has gone up, animate full bar increase, see if possible to learn new move
+            if (originalLevel != player.getLevel()) {
+                for (int i = originalLevel; i <= player.getLevel(); i++) {
+                    moveLearned(originalLevel);
+
+                    if (i < player.getLevel()) {
+                        addPlayerExperience(player.calculateNextLevel(i));
+                        pbExperience.setValue(0);
+                        pbExperience.setMaximum(player.calculateNextLevel(originalLevel));
+                        lblPlayerLevel.setText("Lv." + player.getLevel());
+                    } else {
+                        addPlayerExperience(player.getXP());
+                        pbPlayerHealth.setMaximum(player.getInitialHealth());
+                        System.out.println("make it!!");
+                    }
+                }
+            } else {
+                addPlayerExperience(player.getXP());
+            }
+
+            lblPlayerHealth.setText(player.getHealth() + "/" + player.getInitialHealth());
+            numOfOpp--;
+
+            if (numOfOpp > 0) {
+                btnNext.setEnabled(true);
+            } else {
+                btnReturn.setEnabled(true);
+            }
+        } else { // if move hit but did not K.O
+            pokemonMove();
+        }
+    }
+
+    /**
+     * Returns the number of times a move will attack.
+     *
+     * @param moveName the name of the move to evaluate.
+     * @return the number of times the move will attack.
+     */
+    private int findNumOfAttacks(String moveName) {
+        int numOfAttacks;
+
+        switch (moveName) {
+            case "Double Slap":
+                numOfAttacks = (int) (Math.random()*4 + 2); // Random number from 2 to 5
+                break;
+            case "Quad Blast":
+                numOfAttacks = 4;
+                break;
+            default:
+                numOfAttacks = 1;
+        }
+
+        return numOfAttacks;
     }
 
     /**
@@ -208,31 +257,44 @@ public class BattleScreen extends JFrame {
         pokemon.removePP(attackMove.getName());
         lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + "!");
 
-        // get damage with move
-        int damage = attackMove.determineDamage(pokemon.getLevel(), pokemon.getAttack(), player.getDefence(), player.getType(), 0);
-        int actualDamage = attackMove.getActualDamage();
-        int rawDamage = attackMove.getRawDamage();
+        boolean moveHit = false;
+        int attacks = findNumOfAttacks(attackMove.getName());
+        int damage, actualDamage, rawDamage;
 
-        // determine if a hit or miss
-        Random rand = new Random();
-        if (rand.nextInt(100) <= attackMove.getAccuracy()) {
+        int a = attacks;
+        do {
+            // get potential damage from move
+            damage = attackMove.determineDamage(pokemon.getLevel(), pokemon.getAttack(), player.getDefence(), player.getType(), 0);
+            actualDamage = attackMove.getActualDamage();
+            rawDamage = attackMove.getRawDamage();
 
-            // deal damage
-            player.dealDamage(damage);
-            drainPlayerHealth(player.getHealth());
+            // determine if a hit or miss
+            Random rand = new Random();
+            if (rand.nextInt(100) <= attackMove.getAccuracy()) {
 
+                // deal damage
+                player.dealDamage(damage);
+                drainPlayerHealth(player.getHealth());
+                moveHit = true;
+            }
+
+            a--;
+        } while (a > 0 && pokemon.getHealth() > 0);
+
+        // only run following code if there was a hit
+        if (moveHit) {
             // give effect message
-            if (actualDamage == 0)
+            if (actualDamage == 0 && attackMove.getPower() != 0)
                 lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", it has no effect!");
             else if (actualDamage > rawDamage)
                 lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", it is super effective!");
             else if (rawDamage > actualDamage)
                 lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", it is not very effective!");
 
+            // set up return if player health went down to 0
             if (player.getHealth() == 0) {
                 lblPlayerText2.setText("You have fainted!");
                 lblPlayer.setIcon(null);
-
                 btnReturn.setEnabled(true);
             }
 
@@ -242,9 +304,15 @@ public class BattleScreen extends JFrame {
                 if (attackMove.getPower() == 0 || attackMove.getName().equals("Charge Beam"))
                     lblPokemonText2.setText(text);
                 else
-                    lblPlayerText2.setText(text);
+                    lblPlayerText3.setText(text);
 
-        } else { // if move misses
+            // add text for multi hit
+            if (attacks > 1)
+                lblPlayerText2.setText("Your move hit "+attacks+" times!");
+
+
+
+        } else {
             lblPokemonText.setText(pokemon.getName() + " used " + attackMove.getName() + ", but it missed!");
         }
     }
@@ -828,18 +896,24 @@ public class BattleScreen extends JFrame {
         // add text on player
         lblPlayerText = new JLabel();
         lblPlayerText.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPlayerText.setBounds(10, 480, 350, 120);
+        lblPlayerText.setBounds(10, 470, 350, 120);
         lblPlayerText2 = new JLabel();
         lblPlayerText2.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPlayerText2.setBounds(380, 480, 280, 120);
+        lblPlayerText2.setBounds(380, 470, 280, 120);
+        lblPlayerText3 = new JLabel();
+        lblPlayerText3.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPlayerText3.setBounds(380, 490, 280, 120);
 
         // add text on pokemon
         lblPokemonText = new JLabel();
         lblPokemonText.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPokemonText.setBounds(10, 590, 350, 120);
+        lblPokemonText.setBounds(10, 560, 350, 120);
         lblPokemonText2 = new JLabel();
         lblPokemonText2.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPokemonText2.setBounds(360, 590, 280, 120);
+        lblPokemonText2.setBounds(360, 560, 280, 120);
+        lblPokemonText3 = new JLabel();
+        lblPokemonText3.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblPokemonText3.setBounds(360, 580, 280, 120);
 
         // generate pokemon to battle
         pokemonGeneration();
