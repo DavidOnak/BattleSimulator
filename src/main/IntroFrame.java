@@ -1,13 +1,11 @@
 package main;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.applet.*;
-//import javazoom.jl.player.StdPlayer;
 import java.io.*;
-//import sun.*;
 
 /**
  *
@@ -23,6 +21,7 @@ public class IntroFrame extends JFrame implements ActionListener {
     private JLabel lblLightningL;
     private JLabel lblLightningR;
     private SaveSlots nextFrame;
+    private static Clip bgSong;
 
     /**
      * Constructor that creates the intro start frame for this application.
@@ -38,7 +37,7 @@ public class IntroFrame extends JFrame implements ActionListener {
         start.addActionListener(this);
 
         // add music
-        //music(addImage());
+        music("sounds/PokemonThemeSong.wav");
     }
 
     /**
@@ -47,6 +46,7 @@ public class IntroFrame extends JFrame implements ActionListener {
      * @param e, ActionEvent from pressing the start button
      */
     public void actionPerformed(ActionEvent e) {
+        bgSong.close();
         System.out.println("Clicked start button, destroying IntroFrame");
         intro.dispose();
         nextFrame.slots.setVisible(true);
@@ -124,49 +124,21 @@ public class IntroFrame extends JFrame implements ActionListener {
         }
     }
 
-    // TODO: Get muisic working here or make a class that can deal with muisic generation so other classes can use it.
     /**
      * Adds background music to the frame
      *
-     * @param type, 1 or 0 for type of music to play
-     *//*
-    public static void music(int type){//add background music
-        AudioPlayer MGP = AudioPlayer.player;
-        AudioStream BGM;
-        AudioData MD;
-        ContinuousAudioDataStream loop = null;
-        int x = (int)(2*Math.random()+1);//for radom selected song
-        try{
-            if (image1 == 4 || image2 == 4){//for nyan pikacho theame
-                InputStream test = new FileInputStream("U:\\Nyan-Cat.wav");
-                BGM = new AudioStream(test);
-                AudioPlayer.player.start(BGM);
-            }else{//for regualar theame
-                if (x==1){
-                    InputStream test = new FileInputStream("U:\\Pokemon Music 1.wav");
-                    BGM = new AudioStream(test);
-                    AudioPlayer.player.start(BGM);
-                }else{
-                    InputStream test = new FileInputStream("U:\\Pokemon Music 2.wav");
-                    BGM = new AudioStream(test);
-                    AudioPlayer.player.start(BGM);
-                }
-            }
-            //MD = BGM.getData();
-            //loop = new ContinuousAudioDataStream(MD);
+     * @param filename, name of the music file to play
+     */
+    public static void music(String filename) {
+        try {
+            bgSong = AudioSystem.getClip();
+            bgSong.open(AudioSystem.getAudioInputStream(new File(filename)));
+            bgSong.start();
+        } catch (Exception ex) {
+            System.out.println("ERROR: UNABLE TO PLAY MUSIC!");
         }
-        catch(FileNotFoundException e){
-            System.out.print(e.toString());
-        }
-        catch(IOException error)
-        {
-            System.out.print(error.toString());
-        }
-
-        MGP.start(loop);
-
     }
-*/
+
     /**
      * Creates a JFrame for intro with GUI.
      */
