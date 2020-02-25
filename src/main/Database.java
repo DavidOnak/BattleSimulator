@@ -85,6 +85,12 @@ public class Database extends JFrame{
         Dimension sizeBMS = btnMoveSelection.getPreferredSize();
         btnMoveSelection.setBounds(600, 570, sizeBMS.width, sizeBMS.height);
 
+        // implement scroll bar
+        //ScrollablePicture picture = new ScrollablePicture( ... );
+        //JScrollPane scrollPane = new JScrollPane(textArea);
+        //setPreferredSize(new Dimension(450, 110));
+        //panel.add(scrollPane, BorderLayout.CENTER);
+
         //add components to panel
         panel.add(btnMoveSelection);
         panel.add(btnMainMenu);
