@@ -1,11 +1,6 @@
-package main;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.JOptionPane;
-import java.io.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  *

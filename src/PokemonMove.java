@@ -1,5 +1,3 @@
-package main;
-
 /**
  *
  * @author David Onak

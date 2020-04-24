@@ -1,7 +1,3 @@
-package main;
-
-import main.IntroFrame;
-
 /**
  *
  * @author David Onak
